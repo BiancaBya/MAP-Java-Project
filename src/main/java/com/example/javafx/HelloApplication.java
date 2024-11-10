@@ -18,16 +18,13 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class HelloApplication extends Application {
-    @Override
-    public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
-        stage.show();
-    }
 
     public static void main(String[] args) {
+        launch();
+    }
+
+    @Override
+    public void start(Stage stage) throws IOException {
 
         String username = "postgres";
         String password = "parola";
@@ -38,12 +35,19 @@ public class HelloApplication extends Application {
 
         Service service = new Service(userDBRepo, friendDBRepo);
 
-        //Console console = new Console(service);
 
-        //console.run();
+        FXMLLoader Loader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
+        Scene scene = new Scene(Loader.load(), 320, 240);
 
-        launch();
+        LoginController controller = Loader.getController();
+        controller.setService(service);
+
+        stage.setTitle("Social Network");
+        stage.setScene(scene);
+        stage.show();
+
     }
+
 }
 
 

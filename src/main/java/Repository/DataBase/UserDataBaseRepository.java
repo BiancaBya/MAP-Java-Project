@@ -45,8 +45,9 @@ public class UserDataBaseRepository implements Repository<Long, Utilizator>{
                 Long id = resultSet.getLong("id");
                 String firstName = resultSet.getString("firstName");
                 String lastName = resultSet.getString("lastName");
+                String password = resultSet.getString("password");
 
-                Utilizator utilizator = new Utilizator(firstName, lastName);
+                Utilizator utilizator = new Utilizator(firstName, lastName, password);
                 utilizator.setId(id);
                 usersDataBase.add(utilizator);
             }

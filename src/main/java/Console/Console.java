@@ -39,17 +39,20 @@ public class Console {
 
                 case 1: // Add User
 
-                    System.out.println("Enter user's first name:");
+                    System.out.println("Enter user's first name: ");
                     String firstName = scanner.next();
 
-                    System.out.println("Enter user's last name:");
+                    System.out.println("Enter user's last name: ");
                     String lastName = scanner.next();
+
+                    System.out.println("Enter user's password: ");
+                    String password = scanner.next();
 
                     Long id = 0L;
                     for (Utilizator u : service.findAll_user())
                         id = u.getId() + 1;
 
-                    Utilizator user = new Utilizator(firstName, lastName);
+                    Utilizator user = new Utilizator(firstName, lastName, password);
                     user.setId(id);
                     service.add_user(user);
                     break;

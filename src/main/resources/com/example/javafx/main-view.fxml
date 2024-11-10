@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.MainController">
+
+    <Label fx:id="messageLabel" />
+
+    <HBox fx:id="HBox">
+        <Button fx:id="addFriendButton" mnemonicParsing="false" onAction="#onButtonAddFriend" text=" Add Friend " />
+        <Button fx:id="deleteFriendButton" mnemonicParsing="false" onAction="#onButtonDeleteFriend" text=" Delete Friend " />
+        <TextField fx:id="friendsFirstNameField" promptText="Friend's First Name" />
+    </HBox>
+
+    <TableView fx:id="friendTable">
+        <columns>
+            <TableColumn fx:id="friendFirstNameColumn" text="First Name"/>
+            <TableColumn fx:id="friendLastNameColumn" text="Last Name"/>
+        </columns>
+    </TableView>
+
+</VBox>
+

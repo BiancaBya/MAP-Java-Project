@@ -43,6 +43,10 @@ public class Service {
         return repository_users.findOne(id);
     }
 
+    public Optional<Friendship> find_friendship(Tuple<Long, Long> id) {
+        return repository_friendships.findOne(id);
+    }
+
     public Iterable<Utilizator> findAll_user() {
 
         Iterable<Utilizator> users =  repository_users.findAll();
