@@ -73,11 +73,12 @@ public class UserDataBaseRepository implements Repository<Long, Utilizator>{
         int rez = -1;
 
         try(Connection connection = DriverManager.getConnection(url, username, password);
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO Users (firstname, lastname) VALUES (?, ?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO Users (firstname, lastname, password) VALUES (?, ?, ?)");
         ){
 
             statement.setString(1, entity.getFirstName());
             statement.setString(2, entity.getLastName());
+            statement.setString(3, entity.getPassword());
             rez = statement.executeUpdate();
 
         }catch (SQLException e){

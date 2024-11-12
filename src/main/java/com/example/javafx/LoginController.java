@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -60,6 +61,34 @@ public class LoginController {
         }
     }
 
+    public void onSignUpClicked(){
+
+        String firstName = firstNameField.getText();
+        String lastName = lastNameField.getText();
+        String password = passwordField.getText();
+
+        if(firstName.isEmpty() || lastName.isEmpty() || password.isEmpty()){
+            loginMessage.setText("Please fill all the fields");
+        } else {
+
+            Long id = service.get_user_id_by_name(firstName);
+            Optional<Utilizator> user = service.find_user(id);
+
+            if (user.isPresent()) {
+
+                loginMessage.setText("User already exists");
+
+            } else {
+
+                Utilizator new_user = new Utilizator(firstName, lastName, password);
+                service.add_user(new_user);
+                loginMessage.setText("User created");
+
+            }
+        }
+
+    }
+
     private void openMainScene(Utilizator user){
 
         try{
@@ -82,3 +111,5 @@ public class LoginController {
     }
 
 }
+
+

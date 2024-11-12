@@ -6,11 +6,11 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.MainController">
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.MainController" spacing="10.0">
 
     <Label fx:id="messageLabel" />
 
-    <HBox fx:id="HBox">
+    <HBox fx:id="HBox" spacing="10.0" alignment="CENTER">
         <Button fx:id="addFriendButton" mnemonicParsing="false" onAction="#onButtonAddFriend" text=" Add Friend " />
         <Button fx:id="deleteFriendButton" mnemonicParsing="false" onAction="#onButtonDeleteFriend" text=" Delete Friend " />
         <TextField fx:id="friendsFirstNameField" promptText="Friend's First Name" />
@@ -22,6 +22,16 @@
             <TableColumn fx:id="friendLastNameColumn" text="Last Name"/>
         </columns>
     </TableView>
+
+    <HBox fx:id="HBoxDeleteModify" alignment="CENTER" spacing="10.0">
+        <Button fx:id="Delete" mnemonicParsing="false" onAction="#onButtonDelete" text="Delete Account"/>
+        <Button fx:id="Modify" mnemonicParsing="false" onAction="#onButtonModify" text="Modify Account"/>
+        <VBox spacing="5.0">
+            <TextField fx:id="firstNameField" promptText="First Name"/>
+            <TextField fx:id="lastNameField" promptText="Last Name"/>
+        </VBox>
+    </HBox>
+
 
 </VBox>
 
