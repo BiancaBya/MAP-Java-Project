@@ -6,6 +6,7 @@ import Repository.Repository;
 import Domain.Friendship;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class FriendshipDataBaseRepository implements Repository<Tuple<Long, Long>, Friendship>{
@@ -46,9 +47,13 @@ public class FriendshipDataBaseRepository implements Repository<Tuple<Long, Long
 
                 Long id_user_1 = resultSet.getLong("id_user_1");
                 Long id_user_2 = resultSet.getLong("id_user_2");
+                LocalDateTime dateTime = resultSet.getTimestamp("friendship_date").toLocalDateTime();
+                String status = resultSet.getString("friendship_status");
 
                 Friendship friendship = new Friendship(id_user_1, id_user_2);
                 friendship.setId(new Tuple<>(id_user_1, id_user_2));
+                friendship.setStatus(status);
+                friendship.setDate(dateTime);
                 friendsDataBase.add(friendship);
             }
 
@@ -74,11 +79,13 @@ public class FriendshipDataBaseRepository implements Repository<Tuple<Long, Long
         int rez = -1;
 
         try(Connection connection = DriverManager.getConnection(url, username, password);
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO Friendships (id_user_1, id_user_2) VALUES (?, ?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO Friendships (id_user_1, id_user_2, friendship_date, friendship_status) VALUES (?, ?, ?, ?)")
         ){
 
             statement.setLong(1, friendship.getId_user_1());
             statement.setLong(2, friendship.getId_user_2());
+            statement.setTimestamp(3, Timestamp.valueOf(friendship.getDate()));
+            statement.setString(4, friendship.getStatus());
             rez = statement.executeUpdate();
 
         }catch (SQLException e){
@@ -102,7 +109,7 @@ public class FriendshipDataBaseRepository implements Repository<Tuple<Long, Long
 
         if (friendship.isPresent()) {
             try (Connection connection = DriverManager.getConnection(url, username, password);
-                 PreparedStatement statement = connection.prepareStatement("DELETE FROM Friendships WHERE id_user_1 = ? and id_user_2 = ?");) {
+                 PreparedStatement statement = connection.prepareStatement("DELETE FROM Friendships WHERE id_user_1 = ? and id_user_2 = ?")) {
 
                 statement.setLong(1, friendship.get().getId_user_1());
                 statement.setLong(2, friendship.get().getId_user_2());
@@ -136,10 +143,10 @@ public class FriendshipDataBaseRepository implements Repository<Tuple<Long, Long
 
         if (existingFriendship.isPresent()) {
             try (Connection connection = DriverManager.getConnection(url, username, password);
-                 PreparedStatement statement = connection.prepareStatement("UPDATE Friendships SET id_user_1 = ?, id_user_2 = ? WHERE id_user_1 = ? and id_user_2 = ?");) {
+                 PreparedStatement statement = connection.prepareStatement("UPDATE Friendships SET friendship_date = ?, friendship_status = ? WHERE id_user_1 = ? and id_user_2 = ?")) {
 
-                statement.setLong(1, friendship.getId_user_1());
-                statement.setLong(2, friendship.getId_user_2());
+                statement.setTimestamp(1, Timestamp.valueOf(friendship.getDate()));
+                statement.setString(2, friendship.getStatus());
                 statement.setLong(3, friendship.getId_user_1());
                 statement.setLong(4, friendship.getId_user_2());
 

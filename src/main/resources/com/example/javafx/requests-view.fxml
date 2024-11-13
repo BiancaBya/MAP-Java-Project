@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.RequestsController" spacing="10.0">
+    <Label fx:id="messageLabel" />
+    <HBox fx:id="buttonsHBox" alignment="CENTER" spacing="10.0">
+        <Button fx:id="acceptFriendshipButton" mnemonicParsing="false" onAction="#onAcceptButtonClicked" text="Accept Friendship"/>
+        <Button fx:id="rejectFriendshipButton" mnemonicParsing="false" onAction="#onRejectButtonClicked" text="Reject Friendship"/>
+        <TextField fx:id="friendsFirstNameTextField" promptText="Friend's First Name"/>
+    </HBox>
+    <TableView fx:id="requestsTable">
+        <columns>
+            <TableColumn fx:id="firstNameColumn" style="-fx-alignment: CENTER;" text="First Name"/>
+            <TableColumn fx:id="lastNameColumn" style="-fx-alignment: CENTER;" text="Last Name"/>
+            <TableColumn fx:id="dateColumn" style="-fx-alignment: CENTER;" text="Friendship Date"/>
+            <TableColumn fx:id="statusColumn" style="-fx-alignment: CENTER;" text="Friendship Status"/>
+        </columns>
+    </TableView>
+</VBox>
+
+
+

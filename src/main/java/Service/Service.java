@@ -71,6 +71,12 @@ public class Service {
         return users;
     }
 
+    public Iterable<Friendship> findAll_friendships() {
+
+        return repository_friendships.findAll();
+
+    }
+
 
     public void add_friendship(Long id1, Long id2) {
 
@@ -102,6 +108,12 @@ public class Service {
                 repository_friendships.delete(new Tuple<>(id2,id1));
         }));
 
+    }
+
+    public void update_friendship(Friendship friendship){
+
+        if(repository_friendships.findOne(friendship.getId()).isPresent())
+            repository_friendships.update(friendship);
     }
 
 

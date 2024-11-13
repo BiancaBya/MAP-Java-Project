@@ -48,7 +48,7 @@ public class LoginController {
         Long id = service.get_user_id_by_name(firstName);
         Optional<Utilizator> user = service.find_user(id);
 
-        if(user.isPresent()){
+        if(user.isPresent() && user.get().getLastName().equals(lastName)){
 
             if(password.equals(user.get().getPassword())){
                 openMainScene(user.get());

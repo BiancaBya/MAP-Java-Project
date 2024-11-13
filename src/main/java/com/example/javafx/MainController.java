@@ -16,8 +16,10 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 public class MainController {
@@ -41,6 +43,9 @@ public class MainController {
 
     @FXML
     private Button deleteFriendButton;
+
+    @FXML
+    private Button friendRequestButton;
 
     @FXML
     private TextField friendsFirstNameField;
@@ -75,12 +80,25 @@ public class MainController {
         loadFriends();
     }
 
+    @FXML
+    private void initialize() {
+
+        friendFirstNameColumn.prefWidthProperty().bind(friendTable.widthProperty().multiply(0.5));
+        friendLastNameColumn.prefWidthProperty().bind(friendTable.widthProperty().multiply(0.5));
+
+    }
+
     private void loadFriends(){
 
         friendTable.getItems().clear();
 
         List<Utilizator> lista = service.get_users_friends(user);
-        ObservableList<Utilizator> friends = FXCollections.observableList(lista);
+        List<Utilizator> userFriends = new ArrayList<>();
+        for(Utilizator u : lista){
+            if(Objects.equals(service.find_friendship(new Tuple<>(user.getId(), u.getId())).get().getStatus(), "Friends"))
+                userFriends.add(u);
+        }
+        ObservableList<Utilizator> friends = FXCollections.observableList(userFriends);
         friendTable.setItems(friends);
 
         friendFirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
@@ -105,7 +123,15 @@ public class MainController {
 
                 Optional<Friendship> friendship = service.find_friendship(new Tuple<>(user.getId(), friend.get().getId()));
                 if(friendship.isPresent()){
-                    messageLabel.setText("Friend already exists");
+                    if(friendship.get().getStatus().equals("Friends")) {
+                        messageLabel.setText("Friend already exists");
+                    }
+                    else if (friendship.get().getStatus().equals("Requested")) {
+                        friendship.get().setStatus("Friends");
+                        friendship.get().setDate(LocalDateTime.now());
+                        service.update_friendship(friendship.get());
+                        loadFriends();
+                    }
                 }
                 else{
                     service.add_friendship(user.getId(), friend.get().getId());
@@ -186,5 +212,33 @@ public class MainController {
 
     }
 
+    public void onFriendRequestButton(){
+        openMainScene();
+    }
+
+
+    private void openMainScene(){
+
+        try{
+
+            FXMLLoader Loader = new FXMLLoader(getClass().getResource("requests-view.fxml"));
+            Stage stage = (Stage) messageLabel.getScene().getWindow();
+            stage.setTitle("Friend Requests");
+            stage.setScene(new Scene(Loader.load()));
+
+            RequestsController requestsController = Loader.getController();
+            requestsController.setService(service);
+            requestsController.setUser(user);
+
+            stage.show();
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
 }
+
+
 

@@ -6,15 +6,17 @@ import java.util.Objects;
 
 public class Friendship extends Entity<Tuple<Long,Long>> {
 
-    LocalDateTime friendsFrom = LocalDateTime.now();
+    LocalDateTime date = LocalDateTime.now();
     Long id_user_1;
     Long id_user_2;
+    String status;
 
-    // de facut cu id
+
     public Friendship(Long id_user_1, Long id_user_2) {
         this.id_user_1 = id_user_1;
         this.id_user_2 = id_user_2;
-        this.friendsFrom = LocalDateTime.now();
+        this.date = LocalDateTime.now();
+        this.status = "Requested";
     }
 
     public Long getId_user_1(){
@@ -28,8 +30,18 @@ public class Friendship extends Entity<Tuple<Long,Long>> {
     /**
      * @return the date when the friendship was created
      */
-    public LocalDateTime getFriendsFrom() {
-        return friendsFrom;
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public String getStatus() { return status; }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override

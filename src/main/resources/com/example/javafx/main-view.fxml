@@ -11,6 +11,7 @@
     <Label fx:id="messageLabel" />
 
     <HBox fx:id="HBox" spacing="10.0" alignment="CENTER">
+        <Button fx:id="friendRequestButton" mnemonicParsing="false" onAction="#onFriendRequestButton" text="Friend Requests"/>
         <Button fx:id="addFriendButton" mnemonicParsing="false" onAction="#onButtonAddFriend" text=" Add Friend " />
         <Button fx:id="deleteFriendButton" mnemonicParsing="false" onAction="#onButtonDeleteFriend" text=" Delete Friend " />
         <TextField fx:id="friendsFirstNameField" promptText="Friend's First Name" />
@@ -18,8 +19,8 @@
 
     <TableView fx:id="friendTable">
         <columns>
-            <TableColumn fx:id="friendFirstNameColumn" text="First Name"/>
-            <TableColumn fx:id="friendLastNameColumn" text="Last Name"/>
+            <TableColumn fx:id="friendFirstNameColumn" style="-fx-alignment: CENTER;" text="First Name"/>
+            <TableColumn fx:id="friendLastNameColumn" style="-fx-alignment: CENTER;" text="Last Name"/>
         </columns>
     </TableView>
 
@@ -34,4 +35,6 @@
 
 
 </VBox>
+
+
 
