@@ -48,11 +48,14 @@ public class Console {
                     System.out.println("Enter user's password: ");
                     String password = scanner.next();
 
+                    System.out.println("Enter user's email: ");
+                    String email = scanner.next();
+
                     Long id = 0L;
                     for (Utilizator u : service.findAll_user())
                         id = u.getId() + 1;
 
-                    Utilizator user = new Utilizator(firstName, lastName, password);
+                    Utilizator user = new Utilizator(firstName, lastName, password, email);
                     user.setId(id);
                     service.add_user(user);
                     break;

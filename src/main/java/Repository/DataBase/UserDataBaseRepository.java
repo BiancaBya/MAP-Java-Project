@@ -42,12 +42,14 @@ public class UserDataBaseRepository implements Repository<Long, Utilizator>{
             ResultSet resultSet = statement.executeQuery()){
 
             while(resultSet.next()){
+
                 Long id = resultSet.getLong("id");
                 String firstName = resultSet.getString("firstName");
                 String lastName = resultSet.getString("lastName");
                 String password = resultSet.getString("password");
+                String email = resultSet.getString("email");
 
-                Utilizator utilizator = new Utilizator(firstName, lastName, password);
+                Utilizator utilizator = new Utilizator(firstName, lastName, password, email);
                 utilizator.setId(id);
                 usersDataBase.add(utilizator);
             }
@@ -73,12 +75,13 @@ public class UserDataBaseRepository implements Repository<Long, Utilizator>{
         int rez = -1;
 
         try(Connection connection = DriverManager.getConnection(url, username, password);
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO Users (firstname, lastname, password) VALUES (?, ?, ?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO Users (firstname, lastname, password, email) VALUES (?, ?, ?, ?)");
         ){
 
             statement.setString(1, entity.getFirstName());
             statement.setString(2, entity.getLastName());
             statement.setString(3, entity.getPassword());
+            statement.setString(4, entity.getEmail());
             rez = statement.executeUpdate();
 
         }catch (SQLException e){
@@ -137,11 +140,12 @@ public class UserDataBaseRepository implements Repository<Long, Utilizator>{
 
         if (existingUser.isPresent()) {
             try (Connection connection = DriverManager.getConnection(url, username, password);
-                 PreparedStatement statement = connection.prepareStatement("UPDATE Users SET firstname = ?, lastname = ? WHERE id = ?")) {
+                 PreparedStatement statement = connection.prepareStatement("UPDATE Users SET firstname = ?, lastname = ?, email = ? WHERE id = ?")) {
 
                 statement.setString(1, entity.getFirstName());
                 statement.setString(2, entity.getLastName());
-                statement.setLong(3, entity.getId());
+                statement.setString(3, entity.getEmail());
+                statement.setLong(4, entity.getId());
 
                 rez = statement.executeUpdate();
 

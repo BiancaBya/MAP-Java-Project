@@ -7,10 +7,19 @@
 <?import javafx.scene.layout.*?>
 
 <VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.LoginController">
-    <Label fx:id="loginMessage" text="Log in or Sign up" />
-    <TextField fx:id="firstNameField" promptText="First Name" />
-    <TextField fx:id="lastNameField" promptText="Last Name" />
+
+    <Label text="Log In"/>
+    <Label fx:id="loginMessage" text=" " />
+    <TextField fx:id="emailField" promptText="Email" />
     <PasswordField fx:id="passwordField" promptText="Password" />
+
+    <Label text="Sign Up"/>
+    <Label fx:id="signupMessage" text=" "/>
+    <TextField fx:id="firstNameField" promptText="First Name"/>
+    <TextField fx:id="lastNameField" promptText="Last Name"/>
+    <TextField fx:id="signUpEmailField" promptText="Email"/>
+    <PasswordField fx:id="signUpPasswordField" promptText="Password"/>
+
     <HBox alignment="CENTER" spacing="10.0">
         <Button text="Log in" onAction="#onLoginClicked"/>
         <Button text="Sign up" onAction="#onSignUpClicked"/>

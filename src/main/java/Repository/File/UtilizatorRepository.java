@@ -12,7 +12,7 @@ public class UtilizatorRepository extends AbstractFileRepository<Long, Utilizato
     @Override
     public Utilizator createEntity(String line) {
         String[] splited = line.split(";");
-        Utilizator u = new Utilizator(splited[1], splited[2], splited[3]);
+        Utilizator u = new Utilizator(splited[1], splited[2], splited[3], splited[4]);
         u.setId(Long.parseLong(splited[0]));
         return u;
     }
@@ -23,4 +23,5 @@ public class UtilizatorRepository extends AbstractFileRepository<Long, Utilizato
         return s;
     }
 }
+
 

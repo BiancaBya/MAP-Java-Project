@@ -11,12 +11,14 @@ public class Utilizator extends Entity<Long>{
     private String lastName;
     private String password;
     private List<Utilizator> friends;
+    private String email;
 
-    public Utilizator(String firstName, String lastName, String password) {
+    public Utilizator(String firstName, String lastName, String password, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
         this.friends = new ArrayList<>();
+        this.email = email;
     }
 
     public String getFirstName() {
@@ -46,6 +48,10 @@ public class Utilizator extends Entity<Long>{
     public void setFriends(List<Utilizator> friends) {
         this.friends = new ArrayList<>(friends);
     }
+
+    public String getEmail() {return email;}
+
+    public void setEmail(String email) {this.email = email;}
 
     public void addFriend(Utilizator friend) {
         this.friends.add(friend);

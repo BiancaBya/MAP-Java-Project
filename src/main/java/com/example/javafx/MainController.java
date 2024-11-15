@@ -68,6 +68,9 @@ public class MainController {
     @FXML
     private TextField lastNameField;
 
+    @FXML
+    private TextField emailField;
+
 
     private Utilizator user;
 
@@ -130,11 +133,13 @@ public class MainController {
                         friendship.get().setStatus("Friends");
                         friendship.get().setDate(LocalDateTime.now());
                         service.update_friendship(friendship.get());
+                        messageLabel.setText("Friend added");
                         loadFriends();
                     }
                 }
                 else{
                     service.add_friendship(user.getId(), friend.get().getId(), user.getId());
+                    messageLabel.setText("Friend request sent");
                     loadFriends();
                 }
 
@@ -144,6 +149,8 @@ public class MainController {
 
 
         }
+
+        friendsFirstNameField.clear();
 
     }
 
@@ -176,39 +183,32 @@ public class MainController {
 
         }
 
+        friendsFirstNameField.clear();
+
     }
 
     public void onButtonDelete(){
 
         service.remove_user(user);
 
-        try{
-
-            FXMLLoader Loader = new FXMLLoader(getClass().getResource("login-view.fxml"));
-            Stage stage = (Stage) messageLabel.getScene().getWindow();
-            stage.setTitle("Social Network");
-            stage.setScene(new Scene(Loader.load()));
-
-            LoginController loginController = Loader.getController();
-            loginController.setService(service);
-
-            stage.show();
-
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+        onButtonBackClicked();
     }
 
     public void onButtonModify(){
 
-        String firstName = firstNameField.textProperty().get();
-        String lastName = lastNameField.textProperty().get();
+        String firstName = firstNameField.getText().isEmpty() ? user.getFirstName() : firstNameField.getText();
+        String lastName = lastNameField.getText().isEmpty() ? user.getLastName() : lastNameField.getText();
+        String email = emailField.getText().isEmpty() ? user.getEmail() : emailField.getText();
         Long id = user.getId();
 
-        Utilizator new_user = new Utilizator(firstName, lastName, user.getPassword());
+        Utilizator new_user = new Utilizator(firstName, lastName, user.getPassword(), email);
         new_user.setId(id);
 
         service.update_user(new_user);
+
+        firstNameField.clear();;
+        lastNameField.clear();
+        emailField.clear();
 
     }
 
@@ -229,6 +229,26 @@ public class MainController {
             RequestsController requestsController = Loader.getController();
             requestsController.setService(service);
             requestsController.setUser(user);
+
+            stage.show();
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public void onButtonBackClicked(){
+
+        try{
+
+            FXMLLoader Loader = new FXMLLoader(getClass().getResource("login-view.fxml"));
+            Stage stage = (Stage) messageLabel.getScene().getWindow();
+            stage.setTitle("Social Network");
+            stage.setScene(new Scene(Loader.load(), 420, 480));
+
+            LoginController controller = Loader.getController();
+            controller.setService(service);
 
             stage.show();
 

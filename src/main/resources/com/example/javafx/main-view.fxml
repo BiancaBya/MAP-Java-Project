@@ -25,14 +25,15 @@
     </TableView>
 
     <HBox fx:id="HBoxDeleteModify" alignment="CENTER" spacing="10.0">
+        <Button mnemonicParsing="false" onAction="#onButtonBackClicked" text="Back"/>
         <Button fx:id="Delete" mnemonicParsing="false" onAction="#onButtonDelete" text="Delete Account"/>
         <Button fx:id="Modify" mnemonicParsing="false" onAction="#onButtonModify" text="Modify Account"/>
         <VBox spacing="5.0">
-            <TextField fx:id="firstNameField" promptText="First Name"/>
-            <TextField fx:id="lastNameField" promptText="Last Name"/>
+            <TextField fx:id="firstNameField" promptText="New First Name"/>
+            <TextField fx:id="lastNameField" promptText="New Last Name"/>
+            <TextField fx:id="emailField" promptText="New Email"/>
         </VBox>
     </HBox>
-
 
 </VBox>
 

@@ -222,6 +222,14 @@ public class Service {
         return -1L;
     }
 
+    public Long get_user_id_by_email(String email){
+        for (Utilizator u : findAll_user()){
+            if(u.getEmail().equals(email))
+                return u.getId();
+        }
+        return -1L;
+    }
+
 }
 
 

@@ -23,16 +23,28 @@ public class LoginController {
     private Service service;
 
     @FXML
+    private TextField emailField;
+
+    @FXML
     private TextField firstNameField;
 
     @FXML
     private TextField lastNameField;
 
     @FXML
+    private TextField signUpEmailField;
+
+    @FXML
+    private PasswordField signUpPasswordField;
+
+    @FXML
     private PasswordField passwordField;
 
     @FXML
     private Label loginMessage;
+
+    @FXML
+    private Label signupMessage;
 
 
     public void setService(Service service) {
@@ -41,14 +53,13 @@ public class LoginController {
 
     public void onLoginClicked(){
 
-        String firstName = firstNameField.getText();
-        String lastName = lastNameField.getText();
+        String email = emailField.getText();
         String password = passwordField.getText();
 
-        Long id = service.get_user_id_by_name(firstName);
+        Long id = service.get_user_id_by_email(email);
         Optional<Utilizator> user = service.find_user(id);
 
-        if(user.isPresent() && user.get().getLastName().equals(lastName)){
+        if(user.isPresent()){
 
             if(password.equals(user.get().getPassword())){
                 openMainScene(user.get());
@@ -65,24 +76,29 @@ public class LoginController {
 
         String firstName = firstNameField.getText();
         String lastName = lastNameField.getText();
-        String password = passwordField.getText();
+        String email = signUpEmailField.getText();
+        String password = signUpPasswordField.getText();
 
-        if(firstName.isEmpty() || lastName.isEmpty() || password.isEmpty()){
-            loginMessage.setText("Please fill all the fields");
+        if(firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()){
+            signupMessage.setText("Please fill all the fields");
         } else {
 
-            Long id = service.get_user_id_by_name(firstName);
+            Long id = service.get_user_id_by_email(email);
             Optional<Utilizator> user = service.find_user(id);
 
             if (user.isPresent()) {
 
-                loginMessage.setText("User already exists");
+                signupMessage.setText("User already exists");
 
             } else {
 
-                Utilizator new_user = new Utilizator(firstName, lastName, password);
+                Utilizator new_user = new Utilizator(firstName, lastName, password, email);
                 service.add_user(new_user);
-                loginMessage.setText("User created");
+                signupMessage.setText("User created");
+                firstNameField.clear();
+                lastNameField.clear();
+                signUpEmailField.clear();
+                signUpPasswordField.clear();
 
             }
         }
