@@ -84,7 +84,7 @@ public class Console {
                     String firstname2 = scanner.next();
                     Long id_user_2 = service.get_user_id_by_name(firstname2);
 
-                    service.add_friendship(id_user_1, id_user_2);
+                    service.add_friendship(id_user_1, id_user_2, id_user_1);
 
                     break;
 

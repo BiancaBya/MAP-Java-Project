@@ -18,7 +18,7 @@ public class FriendRepository extends AbstractFileRepository <Tuple<Long, Long>,
         Long id2 = Long.parseLong(line.split(" ")[1]);
 
 
-        Friendship friendship = new Friendship(id1, id2);
+        Friendship friendship = new Friendship(id1, id2, id1);
         friendship.setId(new Tuple<>(id1,id2));
 
         return friendship;

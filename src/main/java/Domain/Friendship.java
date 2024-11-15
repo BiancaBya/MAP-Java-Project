@@ -10,13 +10,15 @@ public class Friendship extends Entity<Tuple<Long,Long>> {
     Long id_user_1;
     Long id_user_2;
     String status;
+    Long id_request;
 
 
-    public Friendship(Long id_user_1, Long id_user_2) {
+    public Friendship(Long id_user_1, Long id_user_2, Long id_request) {
         this.id_user_1 = id_user_1;
         this.id_user_2 = id_user_2;
         this.date = LocalDateTime.now();
         this.status = "Requested";
+        this.id_request = id_request;
     }
 
     public Long getId_user_1(){
@@ -44,6 +46,15 @@ public class Friendship extends Entity<Tuple<Long,Long>> {
         this.status = status;
     }
 
+    public Long getId_request() {
+        return id_request;
+    }
+
+    public void setId_request(Long id_request) {
+        this.id_request = id_request;
+    }
+
+
     @Override
     public boolean equals(Object o){
 
@@ -60,5 +71,6 @@ public class Friendship extends Entity<Tuple<Long,Long>> {
     }
 
 }
+
 
 

@@ -134,7 +134,7 @@ public class MainController {
                     }
                 }
                 else{
-                    service.add_friendship(user.getId(), friend.get().getId());
+                    service.add_friendship(user.getId(), friend.get().getId(), user.getId());
                     loadFriends();
                 }
 

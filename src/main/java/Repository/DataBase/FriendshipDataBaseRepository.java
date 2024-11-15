@@ -49,8 +49,9 @@ public class FriendshipDataBaseRepository implements Repository<Tuple<Long, Long
                 Long id_user_2 = resultSet.getLong("id_user_2");
                 LocalDateTime dateTime = resultSet.getTimestamp("friendship_date").toLocalDateTime();
                 String status = resultSet.getString("friendship_status");
+                Long id_request = resultSet.getLong("id_request");
 
-                Friendship friendship = new Friendship(id_user_1, id_user_2);
+                Friendship friendship = new Friendship(id_user_1, id_user_2, id_request);
                 friendship.setId(new Tuple<>(id_user_1, id_user_2));
                 friendship.setStatus(status);
                 friendship.setDate(dateTime);
@@ -79,13 +80,14 @@ public class FriendshipDataBaseRepository implements Repository<Tuple<Long, Long
         int rez = -1;
 
         try(Connection connection = DriverManager.getConnection(url, username, password);
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO Friendships (id_user_1, id_user_2, friendship_date, friendship_status) VALUES (?, ?, ?, ?)")
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO Friendships (id_user_1, id_user_2, friendship_date, friendship_status, id_request) VALUES (?, ?, ?, ?, ?)")
         ){
 
             statement.setLong(1, friendship.getId_user_1());
             statement.setLong(2, friendship.getId_user_2());
             statement.setTimestamp(3, Timestamp.valueOf(friendship.getDate()));
             statement.setString(4, friendship.getStatus());
+            statement.setLong(5, friendship.getId_request());
             rez = statement.executeUpdate();
 
         }catch (SQLException e){

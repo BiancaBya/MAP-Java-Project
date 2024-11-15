@@ -86,7 +86,7 @@ public class RequestsController {
             Utilizator friend = (friendship.getId_user_1().equals(user.getId())) ?
                     service.find_user(friendship.getId_user_2()).get() :
                     service.find_user(friendship.getId_user_1()).get();
-            return new SimpleStringProperty(friend.getFirstName());
+            return new SimpleStringProperty(friend.getLastName());
 
         });
 
@@ -121,10 +121,17 @@ public class RequestsController {
                 Optional<Friendship> friendship = service.find_friendship(new Tuple<>(user.getId(), friend.get().getId()));
                 if(friendship.isPresent()){
                     if(friendship.get().getStatus().equals("Requested")){
-                        friendship.get().setStatus("Friends");
-                        friendship.get().setDate(LocalDateTime.now());
-                        service.update_friendship(friendship.get());
-                        loadRequestsTable();
+
+                        if (friendship.get().getId_request().equals(user.getId())){
+                            messageLabel.setText("Wait until the user accepts the request");
+                        }
+                        else {
+                            friendship.get().setStatus("Friends");
+                            friendship.get().setDate(LocalDateTime.now());
+                            service.update_friendship(friendship.get());
+                            loadRequestsTable();
+                        }
+
                     }
                     else{
                         friendship.get().setStatus("Friendship already accepted");
@@ -195,5 +202,6 @@ public class RequestsController {
     }
 
 }
+
 
 

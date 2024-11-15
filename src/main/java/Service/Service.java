@@ -78,7 +78,7 @@ public class Service {
     }
 
 
-    public void add_friendship(Long id1, Long id2) {
+    public void add_friendship(Long id1, Long id2, Long id_request) {
 
         Optional<Utilizator> u1 = repository_users.findOne(id1);
         Optional<Utilizator> u2 = repository_users.findOne(id2);
@@ -87,7 +87,7 @@ public class Service {
             user1.addFriend(user2);
             user2.addFriend(user1);
 
-            Friendship f = new Friendship(id1, id2);
+            Friendship f = new Friendship(id1, id2, id_request);
             f.setId(new Tuple<>(id1, id2));
             repository_friendships.save(f);
         }));
@@ -197,11 +197,10 @@ public class Service {
         List<Utilizator> friends = new ArrayList<>();
 
         for (Friendship f : repository_friendships.findAll()) {
-            if(f.getId_user_1().equals(user.getId())){ // adauga de doua ori
+            if(f.getId_user_1().equals(user.getId())){
                 friends.add(repository_users.findOne(f.getId_user_2()).get());
                 Utilizator utilizator = repository_users.findOne(f.getId_user_1()).get();
                 repository_users.findOne(f.getId_user_2()).get().addFriend(utilizator);
-
             }
             else if(f.getId_user_2().equals(user.getId())){
                 friends.add(repository_users.findOne(f.getId_user_1()).get());
@@ -224,5 +223,7 @@ public class Service {
     }
 
 }
+
+
 
 
