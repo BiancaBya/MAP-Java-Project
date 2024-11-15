@@ -37,7 +37,7 @@ public class HelloApplication extends Application {
 
 
         FXMLLoader Loader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));
-        Scene scene = new Scene(Loader.load(), 420, 480);
+        Scene scene = new Scene(Loader.load(), 520, 550);
 
         LoginController controller = Loader.getController();
         controller.setService(service);

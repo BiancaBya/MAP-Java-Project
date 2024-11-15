@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.RequestsController" spacing="10.0" alignment="CENTER">
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.RequestsController" spacing="10.0" alignment="CENTER" stylesheets="@../CSS/requests-styles.css">
     <Label fx:id="messageLabel" />
     <HBox fx:id="buttonsHBox" alignment="CENTER" spacing="10.0">
         <Button fx:id="acceptFriendshipButton" mnemonicParsing="false" onAction="#onAcceptButtonClicked" text="Accept Friendship"/>

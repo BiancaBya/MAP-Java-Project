@@ -6,7 +6,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.LoginController">
+<VBox alignment="CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.LoginController" stylesheets="@../CSS/login-styles.css"
+>
 
     <Label text="Log In"/>
     <Label fx:id="loginMessage" text=" " />

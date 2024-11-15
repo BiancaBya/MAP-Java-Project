@@ -245,7 +245,7 @@ public class MainController {
             FXMLLoader Loader = new FXMLLoader(getClass().getResource("login-view.fxml"));
             Stage stage = (Stage) messageLabel.getScene().getWindow();
             stage.setTitle("Social Network");
-            stage.setScene(new Scene(Loader.load(), 420, 480));
+            stage.setScene(new Scene(Loader.load(), 520, 550));
 
             LoginController controller = Loader.getController();
             controller.setService(service);

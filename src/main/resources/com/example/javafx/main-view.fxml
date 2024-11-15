@@ -6,7 +6,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.MainController" spacing="10.0">
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.MainController" spacing="10.0" stylesheets="@../CSS/main-styles.css">
 
     <Label fx:id="messageLabel" />
 
