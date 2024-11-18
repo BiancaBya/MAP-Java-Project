@@ -26,6 +26,8 @@ public class MainController {
 
     private Service service;
 
+    private Utilizator user;
+
     @FXML
     private TableView<Utilizator> friendTable;
 
@@ -72,7 +74,6 @@ public class MainController {
     private TextField emailField;
 
 
-    private Utilizator user;
 
     public void setService(Service service) {
         this.service = service;
