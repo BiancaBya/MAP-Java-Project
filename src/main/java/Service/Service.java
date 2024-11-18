@@ -4,16 +4,21 @@ import Domain.Friendship;
 import Domain.Tuple;
 import Domain.Utilizator;
 import Repository.Repository;
+import Utils.Observer.Observer;
+import Utils.Observer.Observable;
+import Utils.Events.EntityChangeEvent;
+import Utils.Events.ChangeEventType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 
-public class Service {
+public class Service implements Observable<EntityChangeEvent>{
 
     private final Repository<Long, Utilizator> repository_users;
     private final Repository<Tuple<Long, Long>, Friendship> repository_friendships;
+    private final List<Observer<EntityChangeEvent>> observers = new ArrayList<>();
 
     public Service(Repository<Long, Utilizator> repository, Repository<Tuple<Long, Long>, Friendship> repositoryFriendships) {
         this.repository_users = repository;
@@ -21,22 +26,67 @@ public class Service {
     }
 
     public Optional<Utilizator> add_user(Utilizator user) {
-        return repository_users.save(user);
+
+        Iterable<Utilizator> utilizatori = repository_users.findAll();
+        for (Utilizator u : utilizatori) {
+            if(u.getFirstName().equals(user.getFirstName()) && u.getLastName().equals(user.getLastName())) {
+                return Optional.of(u);
+            }
+        }
+
+        Optional<Utilizator> savedUser = repository_users.save(user);
+        if (savedUser.isEmpty()) {
+            for (Utilizator u : utilizatori) {
+                if(u.getFirstName().equals(user.getFirstName()) && u.getLastName().equals(user.getLastName())) {
+
+                    EntityChangeEvent event = new EntityChangeEvent(ChangeEventType.ADD_USER, u);
+                    notifyObservers(event);
+                    return Optional.of(u);
+
+                }
+            }
+        }
+
+        return Optional.empty();
+
     }
 
     public Optional<Utilizator> remove_user(Utilizator user) {
 
-        List<Tuple<Long, Long>> lista_ind = new ArrayList<>();
-        List<Utilizator> friends = get_users_friends(user);
+        Optional<Utilizator> userDB = repository_users.findOne(user.getId());
 
-        friends.forEach(friend -> lista_ind.add(new Tuple<>(friend.getId(), user.getId())));
-        lista_ind.forEach(tuple -> remove_friendship(tuple.getLeft(), tuple.getRight()));
+        if (userDB.isPresent()) {
 
-        return repository_users.delete(user.getId());
+            List<Tuple<Long, Long>> lista_ind = new ArrayList<>();
+            List<Utilizator> friends = get_users_friends(user);
+
+            friends.forEach(friend -> lista_ind.add(new Tuple<>(friend.getId(), user.getId())));
+            lista_ind.forEach(tuple -> remove_friendship(tuple.getLeft(), tuple.getRight()));
+
+            EntityChangeEvent event = new EntityChangeEvent(ChangeEventType.DELETE_USER, userDB.get());
+            notifyObservers(event);
+
+            return repository_users.delete(user.getId());
+        }
+
+        return Optional.empty();
     }
 
     public Optional<Utilizator> update_user(Utilizator user) {
-        return repository_users.update(user);
+
+        Optional<Utilizator> oldUser = repository_users.findOne(user.getId());
+        if (oldUser.isPresent()) {
+
+            Optional<Utilizator> newUser = repository_users.update(user);
+            if (newUser.isEmpty()) {
+                EntityChangeEvent event = new EntityChangeEvent(ChangeEventType.MODIFY_USER, user, oldUser.get());
+                notifyObservers(event);
+                return newUser;
+            }
+
+        }
+
+        return oldUser;
     }
 
     public Optional<Utilizator> find_user(Long id) {
@@ -90,6 +140,10 @@ public class Service {
             Friendship f = new Friendship(id1, id2, id_request);
             f.setId(new Tuple<>(id1, id2));
             repository_friendships.save(f);
+
+            EntityChangeEvent event = new EntityChangeEvent(ChangeEventType.ADD_FRIENDSHIP, f);
+            notifyObservers(event);
+
         }));
 
     }
@@ -106,14 +160,27 @@ public class Service {
             Optional<Friendship> removed_friendship = repository_friendships.delete(new Tuple<>(id1,id2));
             if(removed_friendship.isEmpty())
                 repository_friendships.delete(new Tuple<>(id2,id1));
+
+            EntityChangeEvent event = new EntityChangeEvent(ChangeEventType.DELETE_FRIENDSHIP, removed_friendship.get());
+            notifyObservers(event);
+
         }));
 
     }
 
     public void update_friendship(Friendship friendship){
 
-        if(repository_friendships.findOne(friendship.getId()).isPresent())
-            repository_friendships.update(friendship);
+        Optional<Friendship> oldFriendship = repository_friendships.findOne(friendship.getId());
+        if(oldFriendship.isPresent()){
+
+            Optional<Friendship> newFriendship = repository_friendships.update(friendship);
+            if(newFriendship.isEmpty()){
+                EntityChangeEvent event = new EntityChangeEvent(ChangeEventType.MODIFY_FRIENDSHIP, friendship, oldFriendship.get());
+                notifyObservers(event);
+            }
+
+        }
+
     }
 
 
@@ -228,6 +295,22 @@ public class Service {
                 return u.getId();
         }
         return -1L;
+    }
+
+
+    @Override
+    public void addObserver(Observer<EntityChangeEvent> e) {
+        observers.add(e);
+    }
+
+    @Override
+    public void removeObserver(Observer<EntityChangeEvent> e) {
+        observers.remove(e);
+    }
+
+    @Override
+    public void notifyObservers(EntityChangeEvent t) {
+        observers.stream().forEach(x -> x.update(t));
     }
 
 }

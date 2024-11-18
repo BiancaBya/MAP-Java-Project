@@ -1,0 +1,7 @@
+package Utils.Events;
+
+public enum ChangeEventType {
+    ADD_USER, DELETE_USER, MODIFY_USER,
+    ADD_FRIENDSHIP, DELETE_FRIENDSHIP, MODIFY_FRIENDSHIP
+}
+
