@@ -215,8 +215,8 @@ public class RequestsController {
             stage.setScene(new Scene(Loader.load()));
 
             MainController mainController = Loader.getController();
-            mainController.setService(service);
             mainController.setUser(user);
+            mainController.setService(service);
 
             stage.show();
 

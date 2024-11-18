@@ -4,6 +4,11 @@ import Domain.Friendship;
 import Domain.Tuple;
 import Service.Service;
 import Domain.Utilizator;
+import Utils.Observer.Observable;
+import Utils.Observer.Observer;
+import Utils.Events.ChangeEventType;
+import Utils.Events.EntityChangeEvent;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -22,11 +27,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-public class MainController {
+public class MainController implements Observer<EntityChangeEvent>{
 
     private Service service;
 
     private Utilizator user;
+
+    ObservableList<Utilizator> model = FXCollections.observableArrayList();
 
     @FXML
     private TableView<Utilizator> friendTable;
@@ -77,11 +84,12 @@ public class MainController {
 
     public void setService(Service service) {
         this.service = service;
+        service.addObserver(this);
+        initModel();
     }
 
     public void setUser(Utilizator user){
         this.user = user;
-        loadFriends();
     }
 
     @FXML
@@ -90,23 +98,24 @@ public class MainController {
         friendFirstNameColumn.prefWidthProperty().bind(friendTable.widthProperty().multiply(0.5));
         friendLastNameColumn.prefWidthProperty().bind(friendTable.widthProperty().multiply(0.5));
 
-    }
-
-    private void loadFriends(){
-
-        friendTable.getItems().clear();
-
-        List<Utilizator> lista = service.get_users_friends(user);
-        List<Utilizator> userFriends = new ArrayList<>();
-        for(Utilizator u : lista){
-            if(Objects.equals(service.find_friendship(new Tuple<>(user.getId(), u.getId())).get().getStatus(), "Friends"))
-                userFriends.add(u);
-        }
-        ObservableList<Utilizator> friends = FXCollections.observableList(userFriends);
-        friendTable.setItems(friends);
-
         friendFirstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         friendLastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+
+        friendTable.setItems(model);
+
+    }
+
+
+    private void initModel(){
+
+        List<Utilizator> lista = new ArrayList<>();
+        for (Utilizator u : service.get_users_friends(user)){
+            if(service.find_friendship(new Tuple<>(u.getId(), user.getId())).get().getStatus().equals("Friends"))
+                lista.add(u);
+        }
+
+        ObservableList<Utilizator> friends = FXCollections.observableArrayList(lista);
+        friendTable.setItems(friends);
 
     }
 
@@ -127,21 +136,30 @@ public class MainController {
 
                 Optional<Friendship> friendship = service.find_friendship(new Tuple<>(user.getId(), friend.get().getId()));
                 if(friendship.isPresent()){
+
                     if(friendship.get().getStatus().equals("Friends")) {
                         messageLabel.setText("Friend already exists");
                     }
+
                     else if (friendship.get().getStatus().equals("Requested")) {
-                        friendship.get().setStatus("Friends");
-                        friendship.get().setDate(LocalDateTime.now());
-                        service.update_friendship(friendship.get());
-                        messageLabel.setText("Friend added");
-                        loadFriends();
+
+                        if (friendship.get().getId_request().equals(user.getId())){
+                            messageLabel.setText("Wait until the user accepts your request");
+                        }
+
+                        else {
+                            friendship.get().setStatus("Friends");
+                            friendship.get().setDate(LocalDateTime.now());
+                            service.update_friendship(friendship.get());
+                            messageLabel.setText("Friend added");
+                        }
+
                     }
+
                 }
                 else{
                     service.add_friendship(user.getId(), friend.get().getId(), user.getId());
                     messageLabel.setText("Friend request sent");
-                    loadFriends();
                 }
 
             } else{
@@ -173,7 +191,6 @@ public class MainController {
                 Optional<Friendship> friendship = service.find_friendship(new Tuple<>(user.getId(), friend.get().getId()));
                 if(friendship.isPresent()){
                     service.remove_friendship(user.getId(), friend.get().getId());
-                    loadFriends();
                 } else{
                     messageLabel.setText("Friend not found");
                 }
@@ -256,6 +273,13 @@ public class MainController {
         }catch (IOException e){
             e.printStackTrace();
         }
+
+    }
+
+    @Override
+    public void update(EntityChangeEvent entityChangeEvent) {
+
+        initModel();
 
     }
 
