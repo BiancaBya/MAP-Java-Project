@@ -245,8 +245,8 @@ public class MainController implements Observer<EntityChangeEvent>{
             stage.setScene(new Scene(Loader.load()));
 
             RequestsController requestsController = Loader.getController();
-            requestsController.setService(service);
             requestsController.setUser(user);
+            requestsController.setService(service);
 
             stage.show();
 
@@ -278,9 +278,8 @@ public class MainController implements Observer<EntityChangeEvent>{
 
     @Override
     public void update(EntityChangeEvent entityChangeEvent) {
-
         initModel();
-
+        friendTable.refresh();
     }
 
 }

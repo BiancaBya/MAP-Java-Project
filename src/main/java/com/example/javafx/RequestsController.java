@@ -4,6 +4,11 @@ import Domain.Friendship;
 import Domain.Tuple;
 import Domain.Utilizator;
 import Service.Service;
+import Utils.Observer.Observable;
+import Utils.Observer.Observer;
+import Utils.Events.ChangeEventType;
+import Utils.Events.EntityChangeEvent;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,11 +26,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class RequestsController {
+public class RequestsController implements Observer<EntityChangeEvent> {
 
     private Service service;
 
     private Utilizator user;
+
+    private ObservableList<Friendship> model = FXCollections.observableArrayList();
 
     @FXML
     private Label messageLabel;
@@ -60,21 +67,34 @@ public class RequestsController {
 
     public void setService(Service service) {
         this.service = service;
+        service.addObserver(this);
+        initModel();
     }
 
     public void setUser(Utilizator user) {
         this.user = user;
-        loadRequestsTable();
     }
 
-    private void loadRequestsTable() {
-
-        requestsTable.getItems().clear();
+    void initModel() {
 
         List<Friendship> friendships = getUsersFriends();
 
         ObservableList<Friendship> friends = FXCollections.observableList(friendships);
         requestsTable.setItems(friends);
+
+    }
+
+
+    @FXML
+    public void initialize() {
+
+        firstNameColumn.prefWidthProperty().bind(requestsTable.widthProperty().multiply(0.25));
+        lastNameColumn.prefWidthProperty().bind(requestsTable.widthProperty().multiply(0.25));
+        dateColumn.prefWidthProperty().bind(requestsTable.widthProperty().multiply(0.25));
+        statusColumn.prefWidthProperty().bind(requestsTable.widthProperty().multiply(0.25));
+
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         firstNameColumn.setCellValueFactory(data -> {
             Friendship friendship = data.getValue();
@@ -94,18 +114,7 @@ public class RequestsController {
 
         });
 
-        dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
-        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
-
-    }
-
-    @FXML
-    public void initialize() {
-
-        firstNameColumn.prefWidthProperty().bind(requestsTable.widthProperty().multiply(0.25));
-        lastNameColumn.prefWidthProperty().bind(requestsTable.widthProperty().multiply(0.25));
-        dateColumn.prefWidthProperty().bind(requestsTable.widthProperty().multiply(0.25));
-        statusColumn.prefWidthProperty().bind(requestsTable.widthProperty().multiply(0.25));
+        requestsTable.setItems(model);
 
     }
 
@@ -133,12 +142,11 @@ public class RequestsController {
                             friendship.get().setStatus("Friends");
                             friendship.get().setDate(LocalDateTime.now());
                             service.update_friendship(friendship.get());
-                            loadRequestsTable();
                         }
 
                     }
                     else{
-                        friendship.get().setStatus("Friendship already accepted");
+                        messageLabel.setText("Friendship already accepted");
                     }
                 }
                 else{
@@ -171,7 +179,6 @@ public class RequestsController {
 
                     if(friendship.get().getStatus().equals("Requested")) {
                         service.remove_friendship(friendship.get().getId_user_1(), friendship.get().getId_user_2());
-                        loadRequestsTable();
                     }
                     else if(friendship.get().getStatus().equals("Friends")) {
                         messageLabel.setText("You are already friends");
@@ -227,6 +234,11 @@ public class RequestsController {
 
     }
 
+    @Override
+    public void update(EntityChangeEvent entityChangeEvent) {
+        initModel();
+        requestsTable.refresh();
+    }
 }
 
 
