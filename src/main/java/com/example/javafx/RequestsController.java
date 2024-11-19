@@ -199,7 +199,8 @@ public class RequestsController {
         List<Friendship> friendships = new ArrayList<>();
         for (Friendship friendship : iterable) {
             if(friendship.getId_user_1().equals(user.getId()) || friendship.getId_user_2().equals(user.getId()))
-                friendships.add(friendship);
+                if(friendship.getStatus().equals("Friends") || !friendship.getId_request().equals(user.getId()))
+                    friendships.add(friendship);
         }
 
         return friendships;
