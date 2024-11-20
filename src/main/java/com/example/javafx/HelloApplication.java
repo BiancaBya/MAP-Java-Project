@@ -2,11 +2,13 @@ package com.example.javafx;
 
 import Console.Console;
 import Domain.Friendship;
+import Domain.Message;
 import Domain.Tuple;
 import Domain.Utilizator;
 import Domain.Validators.FriendshipValidator;
 import Domain.Validators.UtilizatorValidator;
 import Repository.DataBase.FriendshipDataBaseRepository;
+import Repository.DataBase.MessageDataBaseRepository;
 import Repository.DataBase.UserDataBaseRepository;
 import Repository.Repository;
 import Service.Service;
@@ -32,8 +34,9 @@ public class HelloApplication extends Application {
 
         Repository<Long, Utilizator> userDBRepo = new UserDataBaseRepository(url, username, password, new UtilizatorValidator());
         Repository<Tuple<Long, Long>, Friendship> friendDBRepo = new FriendshipDataBaseRepository(url, username, password, new FriendshipValidator());
+        Repository<Long, Message> messageDBRepo = new MessageDataBaseRepository(userDBRepo, url, username, password);
 
-        Service service = new Service(userDBRepo, friendDBRepo);
+        Service service = new Service(userDBRepo, friendDBRepo, messageDBRepo);
 
 
         FXMLLoader Loader = new FXMLLoader(HelloApplication.class.getResource("login-view.fxml"));

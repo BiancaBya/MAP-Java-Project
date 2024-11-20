@@ -1,28 +1,32 @@
 package Service;
 
 import Domain.Friendship;
+import Domain.Message;
 import Domain.Tuple;
 import Domain.Utilizator;
+import Domain.Validators.ValidationException;
 import Repository.Repository;
 import Utils.Observer.Observer;
 import Utils.Observer.Observable;
 import Utils.Events.EntityChangeEvent;
 import Utils.Events.ChangeEventType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Service implements Observable<EntityChangeEvent>{
 
     private final Repository<Long, Utilizator> repository_users;
     private final Repository<Tuple<Long, Long>, Friendship> repository_friendships;
+    private final Repository<Long, Message> repository_messages;
+
     private final List<Observer<EntityChangeEvent>> observers = new ArrayList<>();
 
-    public Service(Repository<Long, Utilizator> repository, Repository<Tuple<Long, Long>, Friendship> repositoryFriendships) {
+    public Service(Repository<Long, Utilizator> repository, Repository<Tuple<Long, Long>, Friendship> repositoryFriendships, Repository<Long, Message> repositoryMessages) {
         this.repository_users = repository;
         this.repository_friendships = repositoryFriendships;
+        this.repository_messages = repositoryMessages;
     }
 
     public Optional<Utilizator> add_user(Utilizator user) {
@@ -296,6 +300,51 @@ public class Service implements Observable<EntityChangeEvent>{
         }
         return -1L;
     }
+
+
+    public List<Message> getMessagesBetween(Utilizator user, Utilizator friend){
+
+        Collection<Message> messages = (Collection<Message>) repository_messages.findAll();
+
+        return messages.stream()
+                .filter( m -> (m.getFrom().equals(user) && m.getTo().contains(repository_users.findOne(friend.getId()).get()))
+                        || (m.getFrom().equals(friend) && m.getTo().contains(repository_users.findOne(user.getId()).get())))
+                .sorted(Comparator.comparing(Message::getDate))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+    }
+
+
+    public boolean addMessage(Utilizator from, Utilizator to, String msg){
+
+        try{
+
+            Message message = new Message(from, Collections.singletonList(to), msg);
+            repository_messages.save(message);
+
+            List<Message> messagesBetweenUsers = getMessagesBetween(from, to);
+            if(messagesBetweenUsers.size() > 1){
+
+                Message oldReplyMessage = messagesBetweenUsers.get(messagesBetweenUsers.size() - 2);
+                Message newReplyMessage = messagesBetweenUsers.get(messagesBetweenUsers.size() - 1);
+                oldReplyMessage.setReply(newReplyMessage);
+                repository_messages.update(oldReplyMessage);
+
+                return true;
+
+            }
+
+        }catch (ValidationException ve){
+            System.out.println("User error");
+        } catch (Exception ex){
+            System.out.println("Message error");
+        }
+
+        return false;
+
+    }
+
+
 
 
     @Override

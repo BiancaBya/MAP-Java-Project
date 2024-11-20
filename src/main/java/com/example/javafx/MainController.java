@@ -276,6 +276,47 @@ public class MainController implements Observer<EntityChangeEvent>{
 
     }
 
+    private void openChat(Utilizator friend){
+
+        try{
+
+            FXMLLoader Loader = new FXMLLoader(getClass().getResource("message-view.fxml"));
+            Stage stage = (Stage) messageLabel.getScene().getWindow();
+            stage.setTitle("Chat");
+            stage.setScene(new Scene(Loader.load(), 520, 550));
+
+            MessageController controller = Loader.getController();
+            controller.setUser(user);
+            controller.setFriend(friend);
+            controller.setService(service);
+
+            stage.show();
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public void onButtonChatClicked(){
+
+        String friendName = friendsFirstNameField.getText();
+        Long id_friend = service.get_user_id_by_name(friendName);
+        Optional<Utilizator> friend = service.find_user(id_friend);
+
+        if(friend.isPresent()) {
+            openChat(friend.get());
+        }
+
+        else{
+            messageLabel.setText("Friend not found");
+        }
+
+    }
+
+
+
     @Override
     public void update(EntityChangeEvent entityChangeEvent) {
         initModel();
