@@ -323,6 +323,7 @@ public class Service implements Observable<EntityChangeEvent>{
             repository_messages.save(message);
 
             List<Message> messagesBetweenUsers = getMessagesBetween(from, to);
+
             if(messagesBetweenUsers.size() > 1){
 
                 Message oldReplyMessage = messagesBetweenUsers.get(messagesBetweenUsers.size() - 2);
@@ -330,9 +331,9 @@ public class Service implements Observable<EntityChangeEvent>{
                 oldReplyMessage.setReply(newReplyMessage);
                 repository_messages.update(oldReplyMessage);
 
-                return true;
-
             }
+
+            return true;
 
         }catch (ValidationException ve){
             System.out.println("User error");
