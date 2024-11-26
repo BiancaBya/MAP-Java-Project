@@ -44,27 +44,41 @@ public class SignupController {
         String email = signUpEmailField.getText();
         String password = signUpPasswordField.getText();
 
-        if(firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()){
-            signupMessage.setText("Please fill all the fields");
-        } else {
+        firstNameField.clear();
+        lastNameField.clear();
+        signUpEmailField.clear();
+        signUpPasswordField.clear();
 
-            Long id = service.get_user_id_by_email(email);
-            Optional<Utilizator> user = service.find_user(id);
+        boolean unique = true;
 
-            if (user.isPresent()) {
-
+        if(!firstName.isEmpty()){
+            Long id = service.get_user_id_by_name(firstName);
+            if(id != -1) {
                 signupMessage.setText("User already exists");
+                unique = false;
+            }
+        }
 
+        if(unique) {
+
+            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                signupMessage.setText("Please fill all the fields");
             } else {
 
-                Utilizator new_user = new Utilizator(firstName, lastName, password, email);
-                service.add_user(new_user);
-                signupMessage.setText("User created");
-                firstNameField.clear();
-                lastNameField.clear();
-                signUpEmailField.clear();
-                signUpPasswordField.clear();
+                Long id = service.get_user_id_by_email(email);
+                Optional<Utilizator> user = service.find_user(id);
 
+                if (user.isPresent()) {
+
+                    signupMessage.setText("User already exists");
+
+                } else {
+
+                    Utilizator new_user = new Utilizator(firstName, lastName, password, email);
+                    service.add_user(new_user);
+                    signupMessage.setText("User created");
+
+                }
             }
         }
 
