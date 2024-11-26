@@ -220,7 +220,7 @@ public class RequestsController implements Observer<EntityChangeEvent> {
             FXMLLoader Loader = new FXMLLoader(getClass().getResource("main-view.fxml"));
             Stage stage = (Stage) messageLabel.getScene().getWindow();
             stage.setTitle("Social Network");
-            stage.setScene(new Scene(Loader.load()));
+            stage.setScene(new Scene(Loader.load(), 790, 720));
 
             MainController mainController = Loader.getController();
             mainController.setUser(user);

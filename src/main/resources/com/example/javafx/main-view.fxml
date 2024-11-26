@@ -8,6 +8,7 @@
 
 <VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.MainController" spacing="10.0" alignment="CENTER" stylesheets="@../CSS/main-styles.css">
 
+    <Label fx:id="usersNamesLabel"/>
     <Label fx:id="messageLabel" />
 
     <HBox fx:id="HBox" spacing="10.0" alignment="CENTER">
@@ -31,11 +32,6 @@
         <Button mnemonicParsing="false" onAction="#onButtonChatClicked" text="Chat"/>
         <Button fx:id="Delete" mnemonicParsing="false" onAction="#onButtonDelete" text="Delete Account"/>
         <Button fx:id="Modify" mnemonicParsing="false" onAction="#onButtonModify" text="Modify Account"/>
-        <VBox spacing="5.0">
-            <TextField fx:id="firstNameField" promptText="New First Name"/>
-            <TextField fx:id="lastNameField" promptText="New Last Name"/>
-            <TextField fx:id="emailField" promptText="New Email"/>
-        </VBox>
     </HBox>
 
 </VBox>

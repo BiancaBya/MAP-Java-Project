@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" spacing="10.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.ModifyController" stylesheets="@../CSS/modify-styles.css">
+
+    <Label fx:id="messageLabel" text="Modify your account"/>
+
+    <VBox spacing="5.0">
+        <TextField fx:id="firstNameField" promptText="New First Name"/>
+        <TextField fx:id="lastNameField" promptText="New Last Name"/>
+        <TextField fx:id="emailField" promptText="New Email"/>
+    </VBox>
+
+    <HBox alignment="CENTER" spacing="10.0">
+        <Button mnemonicParsing="false" onAction="#onButtonModify" text="Modify Account"/>
+        <Button mnemonicParsing="false" onAction="#onButtonBack" text="Back"/>
+    </HBox>
+
+</VBox>
+

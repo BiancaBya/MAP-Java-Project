@@ -26,25 +26,10 @@ public class LoginController {
     private TextField emailField;
 
     @FXML
-    private TextField firstNameField;
-
-    @FXML
-    private TextField lastNameField;
-
-    @FXML
-    private TextField signUpEmailField;
-
-    @FXML
-    private PasswordField signUpPasswordField;
-
-    @FXML
     private PasswordField passwordField;
 
     @FXML
     private Label loginMessage;
-
-    @FXML
-    private Label signupMessage;
 
 
     public void setService(Service service) {
@@ -74,33 +59,20 @@ public class LoginController {
 
     public void onSignUpClicked(){
 
-        String firstName = firstNameField.getText();
-        String lastName = lastNameField.getText();
-        String email = signUpEmailField.getText();
-        String password = signUpPasswordField.getText();
+        try{
 
-        if(firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty()){
-            signupMessage.setText("Please fill all the fields");
-        } else {
+            FXMLLoader Loader = new FXMLLoader(getClass().getResource("signup-view.fxml"));
+            Stage stage = (Stage) loginMessage.getScene().getWindow();
+            stage.setTitle("Sign Up");
+            stage.setScene(new Scene(Loader.load(), 520, 550));
 
-            Long id = service.get_user_id_by_email(email);
-            Optional<Utilizator> user = service.find_user(id);
+            SignupController signupController = Loader.getController();
+            signupController.setService(service);
 
-            if (user.isPresent()) {
+            stage.show();
 
-                signupMessage.setText("User already exists");
-
-            } else {
-
-                Utilizator new_user = new Utilizator(firstName, lastName, password, email);
-                service.add_user(new_user);
-                signupMessage.setText("User created");
-                firstNameField.clear();
-                lastNameField.clear();
-                signUpEmailField.clear();
-                signUpPasswordField.clear();
-
-            }
+        }catch (IOException e){
+            e.printStackTrace();
         }
 
     }
@@ -112,7 +84,7 @@ public class LoginController {
             FXMLLoader Loader = new FXMLLoader(getClass().getResource("main-view.fxml"));
             Stage stage = (Stage) loginMessage.getScene().getWindow();
             stage.setTitle("Social Network");
-            stage.setScene(new Scene(Loader.load()));
+            stage.setScene(new Scene(Loader.load(), 790, 720));
 
             MainController mainController = Loader.getController();
             mainController.setUser(user);

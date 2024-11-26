@@ -116,7 +116,7 @@ public class MessageController {
             FXMLLoader Loader = new FXMLLoader(getClass().getResource("main-view.fxml"));
             Stage stage = (Stage) messageTextField.getScene().getWindow();
             stage.setTitle("Social Network");
-            stage.setScene(new Scene(Loader.load()));
+            stage.setScene(new Scene(Loader.load(), 790, 720));
 
             MainController mainController = Loader.getController();
             mainController.setUser(user);

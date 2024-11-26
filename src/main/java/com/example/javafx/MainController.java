@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -34,6 +35,9 @@ public class MainController implements Observer<EntityChangeEvent>{
     private Utilizator user;
 
     ObservableList<Utilizator> model = FXCollections.observableArrayList();
+
+    @FXML
+    private Label usersNamesLabel;
 
     @FXML
     private TableView<Utilizator> friendTable;
@@ -71,15 +75,6 @@ public class MainController implements Observer<EntityChangeEvent>{
     @FXML
     private Button Modify;
 
-    @FXML
-    private TextField firstNameField;
-
-    @FXML
-    private TextField lastNameField;
-
-    @FXML
-    private TextField emailField;
-
 
 
     public void setService(Service service) {
@@ -109,13 +104,27 @@ public class MainController implements Observer<EntityChangeEvent>{
     private void initModel(){
 
         List<Utilizator> lista = new ArrayList<>();
+        boolean hasRequests = false;
+
         for (Utilizator u : service.get_users_friends(user)){
-            if(service.find_friendship(new Tuple<>(u.getId(), user.getId())).get().getStatus().equals("Friends"))
+            Friendship friendship = service.find_friendship(new Tuple<>(u.getId(), user.getId())).get();
+            if(friendship.getStatus().equals("Friends"))
                 lista.add(u);
+            else if(friendship.getStatus().equals("Requested") && !friendship.getId_request().equals(user.getId()))
+                hasRequests = true;
+        }
+
+        if(hasRequests){
+            friendRequestButton.setText("Friend Requests (new)");
         }
 
         ObservableList<Utilizator> friends = FXCollections.observableArrayList(lista);
         friendTable.setItems(friends);
+
+        if(service.find_user(user.getId()).isPresent()){
+            user = service.find_user(user.getId()).get();
+            usersNamesLabel.setText(user.getFirstName() + " " + user.getLastName());
+        }
 
     }
 
@@ -214,19 +223,22 @@ public class MainController implements Observer<EntityChangeEvent>{
 
     public void onButtonModify(){
 
-        String firstName = firstNameField.getText().isEmpty() ? user.getFirstName() : firstNameField.getText();
-        String lastName = lastNameField.getText().isEmpty() ? user.getLastName() : lastNameField.getText();
-        String email = emailField.getText().isEmpty() ? user.getEmail() : emailField.getText();
-        Long id = user.getId();
+        try{
 
-        Utilizator new_user = new Utilizator(firstName, lastName, user.getPassword(), email);
-        new_user.setId(id);
+            FXMLLoader Loader = new FXMLLoader(getClass().getResource("modify-view.fxml"));
+            Stage stage = (Stage) messageLabel.getScene().getWindow();
+            stage.setTitle("Modify Account");
+            stage.setScene(new Scene(Loader.load(), 520, 550));
 
-        service.update_user(new_user);
+            ModifyController modifyController = Loader.getController();
+            modifyController.setUser(user);
+            modifyController.setService(service);
 
-        firstNameField.clear();;
-        lastNameField.clear();
-        emailField.clear();
+            stage.show();
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
 
     }
 
