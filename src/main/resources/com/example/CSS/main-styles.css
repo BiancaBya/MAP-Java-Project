@@ -101,4 +101,6 @@ VBox {
     -fx-background-color: #004d40;
 }
 
-
+#usersNamesLabel {
+    -fx-font-size: 30px;
+}
