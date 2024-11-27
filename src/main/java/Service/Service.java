@@ -17,28 +17,28 @@ import java.util.stream.Collectors;
 
 public class Service implements Observable<EntityChangeEvent>{
 
-    private final Repository<Long, Utilizator> repository_users;
-    private final Repository<Tuple<Long, Long>, Friendship> repository_friendships;
-    private final Repository<Long, Message> repository_messages;
+    private final Repository<Long, Utilizator> repositoryUsers;
+    private final Repository<Tuple<Long, Long>, Friendship> repositoryFriendships;
+    private final Repository<Long, Message> repositoryMessages;
 
     private final List<Observer<EntityChangeEvent>> observers = new ArrayList<>();
 
-    public Service(Repository<Long, Utilizator> repository, Repository<Tuple<Long, Long>, Friendship> repositoryFriendships, Repository<Long, Message> repositoryMessages) {
-        this.repository_users = repository;
-        this.repository_friendships = repositoryFriendships;
-        this.repository_messages = repositoryMessages;
+    public Service(Repository<Long, Utilizator> repositoryUsers, Repository<Tuple<Long, Long>, Friendship> repositoryFriendships, Repository<Long, Message> repositoryMessages) {
+        this.repositoryUsers = repositoryUsers;
+        this.repositoryFriendships = repositoryFriendships;
+        this.repositoryMessages = repositoryMessages;
     }
 
     public Optional<Utilizator> add_user(Utilizator user) {
 
-        Iterable<Utilizator> utilizatori = repository_users.findAll();
+        Iterable<Utilizator> utilizatori = repositoryUsers.findAll();
         for (Utilizator u : utilizatori) {
             if(u.getFirstName().equals(user.getFirstName()) && u.getLastName().equals(user.getLastName())) {
                 return Optional.of(u);
             }
         }
 
-        Optional<Utilizator> savedUser = repository_users.save(user);
+        Optional<Utilizator> savedUser = repositoryUsers.save(user);
         if (savedUser.isEmpty()) {
             for (Utilizator u : utilizatori) {
                 if(u.getFirstName().equals(user.getFirstName()) && u.getLastName().equals(user.getLastName())) {
@@ -57,7 +57,7 @@ public class Service implements Observable<EntityChangeEvent>{
 
     public Optional<Utilizator> remove_user(Utilizator user) {
 
-        Optional<Utilizator> userDB = repository_users.findOne(user.getId());
+        Optional<Utilizator> userDB = repositoryUsers.findOne(user.getId());
 
         if (userDB.isPresent()) {
 
@@ -70,7 +70,7 @@ public class Service implements Observable<EntityChangeEvent>{
             EntityChangeEvent event = new EntityChangeEvent(ChangeEventType.DELETE_USER, userDB.get());
             notifyObservers(event);
 
-            return repository_users.delete(user.getId());
+            return repositoryUsers.delete(user.getId());
         }
 
         return Optional.empty();
@@ -78,10 +78,10 @@ public class Service implements Observable<EntityChangeEvent>{
 
     public Optional<Utilizator> update_user(Utilizator user) {
 
-        Optional<Utilizator> oldUser = repository_users.findOne(user.getId());
+        Optional<Utilizator> oldUser = repositoryUsers.findOne(user.getId());
         if (oldUser.isPresent()) {
 
-            Optional<Utilizator> newUser = repository_users.update(user);
+            Optional<Utilizator> newUser = repositoryUsers.update(user);
             if (newUser.isEmpty()) {
                 EntityChangeEvent event = new EntityChangeEvent(ChangeEventType.MODIFY_USER, user, oldUser.get());
                 notifyObservers(event);
@@ -94,29 +94,29 @@ public class Service implements Observable<EntityChangeEvent>{
     }
 
     public Optional<Utilizator> find_user(Long id) {
-        return repository_users.findOne(id);
+        return repositoryUsers.findOne(id);
     }
 
     public Optional<Friendship> find_friendship(Tuple<Long, Long> id) {
-        return repository_friendships.findOne(id);
+        return repositoryFriendships.findOne(id);
     }
 
     public Iterable<Utilizator> findAll_user() {
 
-        Iterable<Utilizator> users =  repository_users.findAll();
+        Iterable<Utilizator> users =  repositoryUsers.findAll();
 
-        repository_friendships.findAll().forEach(f -> {
+        repositoryFriendships.findAll().forEach(f -> {
             Long id1 = f.getId_user_1();
             Long id2 = f.getId_user_2();
             for (Utilizator u : users){
 
                 if (u.getId().equals(id1)){
-                    Optional<Utilizator> friend = repository_users.findOne(id2);
+                    Optional<Utilizator> friend = repositoryUsers.findOne(id2);
                     friend.ifPresent(u::addFriend);
                 }
 
                 else if (u.getId().equals(id2)){
-                    Optional<Utilizator> friend = repository_users.findOne(id1);
+                    Optional<Utilizator> friend = repositoryUsers.findOne(id1);
                     friend.ifPresent(u::addFriend);
                 }
             }
@@ -127,15 +127,15 @@ public class Service implements Observable<EntityChangeEvent>{
 
     public Iterable<Friendship> findAll_friendships() {
 
-        return repository_friendships.findAll();
+        return repositoryFriendships.findAll();
 
     }
 
 
     public void add_friendship(Long id1, Long id2, Long id_request) {
 
-        Optional<Utilizator> u1 = repository_users.findOne(id1);
-        Optional<Utilizator> u2 = repository_users.findOne(id2);
+        Optional<Utilizator> u1 = repositoryUsers.findOne(id1);
+        Optional<Utilizator> u2 = repositoryUsers.findOne(id2);
 
         u1.ifPresent(user1 -> u2.ifPresent(user2 -> {
             user1.addFriend(user2);
@@ -143,7 +143,7 @@ public class Service implements Observable<EntityChangeEvent>{
 
             Friendship f = new Friendship(id1, id2, id_request);
             f.setId(new Tuple<>(id1, id2));
-            repository_friendships.save(f);
+            repositoryFriendships.save(f);
 
             EntityChangeEvent event = new EntityChangeEvent(ChangeEventType.ADD_FRIENDSHIP, f);
             notifyObservers(event);
@@ -154,16 +154,16 @@ public class Service implements Observable<EntityChangeEvent>{
 
     public void remove_friendship(Long id1, Long id2) {
 
-        Optional<Utilizator> u1 = repository_users.findOne(id1);
-        Optional<Utilizator> u2 = repository_users.findOne(id2);
+        Optional<Utilizator> u1 = repositoryUsers.findOne(id1);
+        Optional<Utilizator> u2 = repositoryUsers.findOne(id2);
 
         u1.ifPresent(user1 -> u2.ifPresent(user2 -> {
             user2.removeFriend(user1);
             user1.removeFriend(user2);
 
-            Optional<Friendship> removed_friendship = repository_friendships.delete(new Tuple<>(id1,id2));
+            Optional<Friendship> removed_friendship = repositoryFriendships.delete(new Tuple<>(id1,id2));
             if(removed_friendship.isEmpty())
-                repository_friendships.delete(new Tuple<>(id2,id1));
+                repositoryFriendships.delete(new Tuple<>(id2,id1));
 
             EntityChangeEvent event = new EntityChangeEvent(ChangeEventType.DELETE_FRIENDSHIP, removed_friendship.get());
             notifyObservers(event);
@@ -174,10 +174,10 @@ public class Service implements Observable<EntityChangeEvent>{
 
     public void update_friendship(Friendship friendship){
 
-        Optional<Friendship> oldFriendship = repository_friendships.findOne(friendship.getId());
+        Optional<Friendship> oldFriendship = repositoryFriendships.findOne(friendship.getId());
         if(oldFriendship.isPresent()){
 
-            Optional<Friendship> newFriendship = repository_friendships.update(friendship);
+            Optional<Friendship> newFriendship = repositoryFriendships.update(friendship);
             if(newFriendship.isEmpty()){
                 EntityChangeEvent event = new EntityChangeEvent(ChangeEventType.MODIFY_FRIENDSHIP, friendship, oldFriendship.get());
                 notifyObservers(event);
@@ -267,16 +267,16 @@ public class Service implements Observable<EntityChangeEvent>{
 
         List<Utilizator> friends = new ArrayList<>();
 
-        for (Friendship f : repository_friendships.findAll()) {
+        for (Friendship f : repositoryFriendships.findAll()) {
             if(f.getId_user_1().equals(user.getId())){
-                friends.add(repository_users.findOne(f.getId_user_2()).get());
-                Utilizator utilizator = repository_users.findOne(f.getId_user_1()).get();
-                repository_users.findOne(f.getId_user_2()).get().addFriend(utilizator);
+                friends.add(repositoryUsers.findOne(f.getId_user_2()).get());
+                Utilizator utilizator = repositoryUsers.findOne(f.getId_user_1()).get();
+                repositoryUsers.findOne(f.getId_user_2()).get().addFriend(utilizator);
             }
             else if(f.getId_user_2().equals(user.getId())){
-                friends.add(repository_users.findOne(f.getId_user_1()).get());
-                Utilizator utilizator = repository_users.findOne(f.getId_user_2()).get();
-                repository_users.findOne(f.getId_user_1()).get().addFriend(utilizator);
+                friends.add(repositoryUsers.findOne(f.getId_user_1()).get());
+                Utilizator utilizator = repositoryUsers.findOne(f.getId_user_2()).get();
+                repositoryUsers.findOne(f.getId_user_1()).get().addFriend(utilizator);
             }
         }
 
@@ -304,11 +304,11 @@ public class Service implements Observable<EntityChangeEvent>{
 
     public List<Message> getMessagesBetween(Utilizator user, Utilizator friend){
 
-        Collection<Message> messages = (Collection<Message>) repository_messages.findAll();
+        Collection<Message> messages = (Collection<Message>) repositoryMessages.findAll();
 
         return messages.stream()
-                .filter( m -> (m.getFrom().equals(user) && m.getTo().contains(repository_users.findOne(friend.getId()).get()))
-                        || (m.getFrom().equals(friend) && m.getTo().contains(repository_users.findOne(user.getId()).get())))
+                .filter( m -> (m.getFrom().equals(user) && m.getTo().contains(repositoryUsers.findOne(friend.getId()).get()))
+                        || (m.getFrom().equals(friend) && m.getTo().contains(repositoryUsers.findOne(user.getId()).get())))
                 .sorted(Comparator.comparing(Message::getDate))
                 .collect(Collectors.toCollection(ArrayList::new));
 
@@ -320,7 +320,7 @@ public class Service implements Observable<EntityChangeEvent>{
         try{
 
             Message message = new Message(from, Collections.singletonList(to), msg);
-            repository_messages.save(message);
+            repositoryMessages.save(message);
 
             List<Message> messagesBetweenUsers = getMessagesBetween(from, to);
 
@@ -329,7 +329,7 @@ public class Service implements Observable<EntityChangeEvent>{
                 Message oldReplyMessage = messagesBetweenUsers.get(messagesBetweenUsers.size() - 2);
                 Message newReplyMessage = messagesBetweenUsers.get(messagesBetweenUsers.size() - 1);
                 oldReplyMessage.setReply(newReplyMessage);
-                repository_messages.update(oldReplyMessage);
+                repositoryMessages.update(oldReplyMessage);
 
             }
 
