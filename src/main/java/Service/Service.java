@@ -322,16 +322,25 @@ public class Service implements Observable<EntityChangeEvent>{
             Message message = new Message(from, Collections.singletonList(to), msg);
             repositoryMessages.save(message);
 
-            List<Message> messagesBetweenUsers = getMessagesBetween(from, to);
+            return true;
 
-            if(messagesBetweenUsers.size() > 1){
+        }catch (ValidationException ve){
+            System.out.println("User error");
+        } catch (Exception ex){
+            System.out.println("Message error");
+        }
 
-                Message oldReplyMessage = messagesBetweenUsers.get(messagesBetweenUsers.size() - 2);
-                Message newReplyMessage = messagesBetweenUsers.get(messagesBetweenUsers.size() - 1);
-                oldReplyMessage.setReply(newReplyMessage);
-                repositoryMessages.update(oldReplyMessage);
+        return false;
 
-            }
+    }
+
+
+    public boolean addReply(Utilizator from, Utilizator to, String msg, Message reply){
+
+        try{
+
+            Message message = new Message(from, Collections.singletonList(to), msg, reply);
+            repositoryMessages.save(message);
 
             return true;
 

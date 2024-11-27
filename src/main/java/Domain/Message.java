@@ -30,6 +30,14 @@ public class Message extends Entity<Long>{
         this.reply = null;
     }
 
+    public Message(Utilizator from, List<Utilizator> to, String message, Message reply) {
+        this.from = from;
+        this.to = to;
+        this.message = message;
+        this.date = LocalDateTime.now();
+        this.reply = reply;
+    }
+
     @Override
     public Long getId() {
         return id;

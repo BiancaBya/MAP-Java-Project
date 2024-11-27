@@ -37,6 +37,9 @@ public class MessageController {
     @FXML
     private TextField messageTextField;
 
+    @FXML
+    private Label messageLabel;
+
 
     public void setService(Service service){
         this.service = service;
@@ -80,6 +83,12 @@ public class MessageController {
                         setText(friend.getFirstName() + ": " + message.getMessage());
                     }
 
+                    if (message.getReply() != null) {
+                        setStyle("-fx-background-color: lightblue; -fx-text-fill: black;");
+                    } else {
+                        setStyle("");
+                    }
+
                 }
 
             }
@@ -90,10 +99,35 @@ public class MessageController {
 
     }
 
+
     private void addMessage(Message message){
 
-        if(service.addMessage(user, friend, message.getMessage()))
+        if(service.addMessage(user, friend, message.getMessage())) {
             model.add(message);
+            messageListView.refresh();
+        }
+
+        messageTextField.clear();
+        messageLabel.setText("");
+
+    }
+
+    private void addReply(Message message){
+
+        if(messageListView.getSelectionModel().getSelectedItem() != null){
+
+            Message reply = messageListView.getSelectionModel().getSelectedItem();
+            if(service.addReply(user, friend, message.getMessage(), reply)) {
+                model.add(message);
+                messageListView.refresh();
+            }
+
+            messageTextField.clear();
+            messageLabel.setText("");
+
+        } else{
+            messageLabel.setText("Select a message");
+        }
 
     }
 
@@ -104,7 +138,16 @@ public class MessageController {
         if(!text.isEmpty()){
             Message message = new Message(user, List.of(friend), text, LocalDateTime.now());
             addMessage(message);
-            messageTextField.clear();
+        }
+
+    }
+
+    public void onReplyButtonClicked(){
+
+        String text = messageTextField.getText();
+        if(!text.isEmpty()){
+            Message message = new Message(user, List.of(friend), text, LocalDateTime.now());
+            addReply(message);
         }
 
     }

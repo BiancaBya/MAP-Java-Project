@@ -9,12 +9,14 @@
 <VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.javafx.MessageController" prefHeight="400.0" prefWidth="600.0" spacing="10.0" stylesheets="@../CSS/message-styles.css">
 
     <Label text="Chat"/>
+    <Label fx:id="messageLabel"/>
 
     <ListView fx:id="messageListView"/>
 
     <HBox>
         <TextField fx:id="messageTextField" promptText="Type message"/>
         <Button text="Send" mnemonicParsing="false" onAction="#onSendButtonClicked"/>
+        <Button text="Reply" mnemonicParsing="false" onAction="#onReplyButtonClicked"/>
     </HBox>
 
     <Button text="Back" mnemonicParsing="false" onAction="#onBackButtonClicked"/>
