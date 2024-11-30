@@ -2,20 +2,13 @@ package com.example.javafx;
 
 import Service.Service;
 import Domain.Utilizator;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class LoginController {
@@ -41,8 +34,8 @@ public class LoginController {
         String email = emailField.getText();
         String password = passwordField.getText();
 
-        Long id = service.get_user_id_by_email(email);
-        Optional<Utilizator> user = service.find_user(id);
+        Long id = service.getUserIdByEmail(email);
+        Optional<Utilizator> user = service.findUser(id);
 
         if(user.isPresent()){
 

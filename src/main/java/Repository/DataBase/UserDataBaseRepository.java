@@ -3,11 +3,14 @@ package Repository.DataBase;
 import Domain.Validators.Validator;
 import Repository.Repository;
 import Domain.Utilizator;
+import Repository.PagingRepository;
+import Utils.Paging.Page;
+import Utils.Paging.Pageable;
 
 import java.sql.*;
 import java.util.*;
 
-public class UserDataBaseRepository implements Repository<Long, Utilizator>{
+public class UserDataBaseRepository implements PagingRepository<Long, Utilizator> {
 
     private final String url;
     private final String username;
@@ -170,6 +173,50 @@ public class UserDataBaseRepository implements Repository<Long, Utilizator>{
         });
     }
 
+    @Override
+    public Page<Utilizator> findAllOnPage(Pageable pageable) {
+
+        List<Utilizator> usersList = new ArrayList<>();
+
+        try (Connection connection = DriverManager.getConnection(url, username, password);
+        PreparedStatement pageStatement = connection.prepareStatement("SELECT * FROM Users " + "LIMIT ? OFFSET ?");
+        PreparedStatement countStatement = connection.prepareStatement("SELECT COUNT(*) AS count FROM Users")
+        ){
+
+            pageStatement.setInt(1, pageable.getPageSize());
+            pageStatement.setInt(2, pageable.getPageNumber() * pageable.getPageSize());
+            try (ResultSet pageResultSet = pageStatement.executeQuery();
+                 ResultSet countResultSet = countStatement.executeQuery()){
+
+                while(pageResultSet.next()){
+
+                    Long id = pageResultSet.getLong("id");
+                    String firstName = pageResultSet.getString("firstName");
+                    String lastName = pageResultSet.getString("lastName");
+                    String password = pageResultSet.getString("password");
+                    String email = pageResultSet.getString("email");
+
+                    Utilizator user = new Utilizator(firstName, lastName, password, email);
+                    user.setId(id);
+                    usersList.add(user);
+
+                }
+
+                int count = 0;
+                if(countResultSet.next()){
+                    count = countResultSet.getInt("count");
+                }
+
+                return new Page<>(usersList, count);
+
+            }
+
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
 
 

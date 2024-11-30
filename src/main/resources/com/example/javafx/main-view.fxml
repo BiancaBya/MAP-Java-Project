@@ -27,6 +27,13 @@
         </columns>
     </TableView>
 
+    <Label fx:id="pageNumber"/>
+
+    <HBox>
+        <Button fx:id="previousButton" text=" Previous " onAction="#onButtonPreviousClicked"/>
+        <Button fx:id="nextButton" text=" Next " onAction="#onButtonNextClicked"/>
+    </HBox>
+
     <HBox fx:id="HBoxDeleteModify" alignment="CENTER" spacing="10.0">
         <Button mnemonicParsing="false" onAction="#onButtonBackClicked" text="Back"/>
         <Button mnemonicParsing="false" onAction="#onButtonChatClicked" text="Chat"/>

@@ -52,27 +52,27 @@ public class Console {
                     String email = scanner.next();
 
                     Long id = 0L;
-                    for (Utilizator u : service.findAll_user())
+                    for (Utilizator u : service.findAllUsers())
                         id = u.getId() + 1;
 
                     Utilizator user = new Utilizator(firstName, lastName, password, email);
                     user.setId(id);
-                    service.add_user(user);
+                    service.addUser(user);
                     break;
 
                 case 2: // Remove User
 
                     System.out.println("Enter user's First Name:");
                     String firstname = scanner.next();
-                    Long id_utilizator = service.get_user_id_by_name(firstname);
-                    Optional<Utilizator> utilizator = service.find_user(id_utilizator);
+                    Long id_utilizator = service.getUserIdByName(firstname);
+                    Optional<Utilizator> utilizator = service.findUser(id_utilizator);
 
-                    utilizator.ifPresent(service::remove_user);
+                    utilizator.ifPresent(service::removeUser);
                     break;
 
                 case 3: // Print Users
 
-                    Iterable<Utilizator> users = service.findAll_user();
+                    Iterable<Utilizator> users = service.findAllUsers();
                     for (Utilizator u : users) {
                         System.out.println(u);
                     }
@@ -82,12 +82,12 @@ public class Console {
 
                     System.out.println("Enter first user's First Name:");
                     String firstname1 = scanner.next();
-                    Long id_user_1 = service.get_user_id_by_name(firstname1);
+                    Long id_user_1 = service.getUserIdByName(firstname1);
                     System.out.println("Enter second user's First Name:");
                     String firstname2 = scanner.next();
-                    Long id_user_2 = service.get_user_id_by_name(firstname2);
+                    Long id_user_2 = service.getUserIdByName(firstname2);
 
-                    service.add_friendship(id_user_1, id_user_2, id_user_1);
+                    service.addFriendship(id_user_1, id_user_2, id_user_1);
 
                     break;
 
@@ -95,18 +95,18 @@ public class Console {
 
                     System.out.println("Enter first user's First Name:");
                     String firstname_1 = scanner.next();
-                    Long id_user1 = service.get_user_id_by_name(firstname_1);
+                    Long id_user1 = service.getUserIdByName(firstname_1);
                     System.out.println("Enter second user's First Name:");
                     String firstname_2 = scanner.next();
-                    Long id_user2 = service.get_user_id_by_name(firstname_2);
+                    Long id_user2 = service.getUserIdByName(firstname_2);
 
-                    service.remove_friendship(id_user1, id_user2);
+                    service.removeFriendship(id_user1, id_user2);
 
                     break;
 
                 case 6: // Number of communities
 
-                    int nr_communities = service.number_of_communities();
+                    int nr_communities = service.numberOfCommunities();
                     System.out.println("Number of communities: " + nr_communities);
 
                     break;
@@ -114,7 +114,7 @@ public class Console {
                 case 7: // The biggest community
 
                     System.out.println("The biggest community is: ");
-                    for (Utilizator u : service.biggest_community())
+                    for (Utilizator u : service.biggestCommunity())
                         System.out.println(u);
                     break;
 
@@ -122,7 +122,7 @@ public class Console {
 
                     System.out.println("User's ID: ");
                     Long id_user = scanner.nextLong();
-                    System.out.println("User: " + service.find_user(id_user));
+                    System.out.println("User: " + service.findUser(id_user));
 
                 case 9: // Exit
                     break;

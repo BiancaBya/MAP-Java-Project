@@ -10,6 +10,7 @@ import Domain.Validators.UtilizatorValidator;
 import Repository.DataBase.FriendshipDataBaseRepository;
 import Repository.DataBase.MessageDataBaseRepository;
 import Repository.DataBase.UserDataBaseRepository;
+import Repository.FriendshipPagingRepository;
 import Repository.Repository;
 import Service.Service;
 import javafx.application.Application;
@@ -33,7 +34,7 @@ public class HelloApplication extends Application {
         String url = "jdbc:postgresql://localhost:5432/LabMAP";
 
         Repository<Long, Utilizator> userDBRepo = new UserDataBaseRepository(url, username, password, new UtilizatorValidator());
-        Repository<Tuple<Long, Long>, Friendship> friendDBRepo = new FriendshipDataBaseRepository(url, username, password, new FriendshipValidator());
+        FriendshipPagingRepository<Tuple<Long, Long>, Friendship> friendDBRepo = new FriendshipDataBaseRepository(url, username, password, new FriendshipValidator());
         Repository<Long, Message> messageDBRepo = new MessageDataBaseRepository(userDBRepo, url, username, password);
 
         Service service = new Service(userDBRepo, friendDBRepo, messageDBRepo);
@@ -52,5 +53,6 @@ public class HelloApplication extends Application {
     }
 
 }
+
 
 

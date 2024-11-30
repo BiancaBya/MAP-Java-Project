@@ -52,7 +52,7 @@ public class SignupController {
         boolean unique = true;
 
         if(!firstName.isEmpty()){
-            Long id = service.get_user_id_by_name(firstName);
+            Long id = service.getUserIdByName(firstName);
             if(id != -1) {
                 signupMessage.setText("User already exists");
                 unique = false;
@@ -65,8 +65,8 @@ public class SignupController {
                 signupMessage.setText("Please fill all the fields");
             } else {
 
-                Long id = service.get_user_id_by_email(email);
-                Optional<Utilizator> user = service.find_user(id);
+                Long id = service.getUserIdByEmail(email);
+                Optional<Utilizator> user = service.findUser(id);
 
                 if (user.isPresent()) {
 
@@ -75,7 +75,7 @@ public class SignupController {
                 } else {
 
                     Utilizator new_user = new Utilizator(firstName, lastName, password, email);
-                    service.add_user(new_user);
+                    service.addUser(new_user);
                     signupMessage.setText("User created");
 
                 }

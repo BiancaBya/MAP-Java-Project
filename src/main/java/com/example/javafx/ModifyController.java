@@ -5,7 +5,6 @@ import Service.Service;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -49,7 +48,7 @@ public class ModifyController {
         Utilizator new_user = new Utilizator(firstName, lastName, user.getPassword(), email);
         new_user.setId(id);
 
-        service.update_user(new_user);
+        service.updateUser(new_user);
         messageLabel.setText("User updated");
 
         firstNameField.clear();

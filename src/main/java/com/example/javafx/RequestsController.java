@@ -4,9 +4,7 @@ import Domain.Friendship;
 import Domain.Tuple;
 import Domain.Utilizator;
 import Service.Service;
-import Utils.Observer.Observable;
 import Utils.Observer.Observer;
-import Utils.Events.ChangeEventType;
 import Utils.Events.EntityChangeEvent;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -99,8 +97,8 @@ public class RequestsController implements Observer<EntityChangeEvent> {
         firstNameColumn.setCellValueFactory(data -> {
             Friendship friendship = data.getValue();
             Utilizator friend = (friendship.getId_user_1().equals(user.getId())) ?
-                    service.find_user(friendship.getId_user_2()).get() :
-                    service.find_user(friendship.getId_user_1()).get();
+                    service.findUser(friendship.getId_user_2()).get() :
+                    service.findUser(friendship.getId_user_1()).get();
             return new SimpleStringProperty(friend.getFirstName());
 
         });
@@ -108,8 +106,8 @@ public class RequestsController implements Observer<EntityChangeEvent> {
         lastNameColumn.setCellValueFactory(data -> {
             Friendship friendship = data.getValue();
             Utilizator friend = (friendship.getId_user_1().equals(user.getId())) ?
-                    service.find_user(friendship.getId_user_2()).get() :
-                    service.find_user(friendship.getId_user_1()).get();
+                    service.findUser(friendship.getId_user_2()).get() :
+                    service.findUser(friendship.getId_user_1()).get();
             return new SimpleStringProperty(friend.getLastName());
 
         });
@@ -127,11 +125,11 @@ public class RequestsController implements Observer<EntityChangeEvent> {
             messageLabel.setText("Please enter the first name");
         }
         else{
-            Long id = service.get_user_id_by_name(firstName);
-            Optional<Utilizator> friend = service.find_user(id);
+            Long id = service.getUserIdByName(firstName);
+            Optional<Utilizator> friend = service.findUser(id);
             if(friend.isPresent()){
 
-                Optional<Friendship> friendship = service.find_friendship(new Tuple<>(user.getId(), friend.get().getId()));
+                Optional<Friendship> friendship = service.findFriendship(new Tuple<>(user.getId(), friend.get().getId()));
                 if(friendship.isPresent()){
                     if(friendship.get().getStatus().equals("Requested")){
 
@@ -141,7 +139,7 @@ public class RequestsController implements Observer<EntityChangeEvent> {
                         else {
                             friendship.get().setStatus("Friends");
                             friendship.get().setDate(LocalDateTime.now());
-                            service.update_friendship(friendship.get());
+                            service.updateFriendship(friendship.get());
                         }
 
                     }
@@ -170,15 +168,15 @@ public class RequestsController implements Observer<EntityChangeEvent> {
             messageLabel.setText("Please enter the first name");
         }
         else{
-            Long id = service.get_user_id_by_name(firstName);
-            Optional<Utilizator> friend = service.find_user(id);
+            Long id = service.getUserIdByName(firstName);
+            Optional<Utilizator> friend = service.findUser(id);
             if(friend.isPresent()){
 
-                Optional<Friendship> friendship = service.find_friendship(new Tuple<>(user.getId(), friend.get().getId()));
+                Optional<Friendship> friendship = service.findFriendship(new Tuple<>(user.getId(), friend.get().getId()));
                 if(friendship.isPresent()){
 
                     if(friendship.get().getStatus().equals("Requested")) {
-                        service.remove_friendship(friendship.get().getId_user_1(), friendship.get().getId_user_2());
+                        service.removeFriendship(friendship.get().getId_user_1(), friendship.get().getId_user_2());
                     }
                     else if(friendship.get().getStatus().equals("Friends")) {
                         messageLabel.setText("You are already friends");
@@ -201,7 +199,7 @@ public class RequestsController implements Observer<EntityChangeEvent> {
 
     private List<Friendship> getUsersFriends(){
 
-        Iterable<Friendship> iterable = service.findAll_friendships();
+        Iterable<Friendship> iterable = service.findAllFriendships();
 
         List<Friendship> friendships = new ArrayList<>();
         for (Friendship friendship : iterable) {

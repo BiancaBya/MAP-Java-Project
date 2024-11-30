@@ -6,26 +6,24 @@ import Service.Service;
 import Domain.Utilizator;
 import Utils.Observer.Observable;
 import Utils.Observer.Observer;
-import Utils.Events.ChangeEventType;
 import Utils.Events.EntityChangeEvent;
 
+import Utils.Paging.Page;
+import Utils.Paging.Pageable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 public class MainController implements Observer<EntityChangeEvent>{
@@ -35,6 +33,10 @@ public class MainController implements Observer<EntityChangeEvent>{
     private Utilizator user;
 
     ObservableList<Utilizator> model = FXCollections.observableArrayList();
+
+    private int currentPage = 0;
+
+    private int pageSize = 10;
 
     @FXML
     private Label usersNamesLabel;
@@ -75,6 +77,15 @@ public class MainController implements Observer<EntityChangeEvent>{
     @FXML
     private Button Modify;
 
+    @FXML
+    private Button previousButton;
+
+    @FXML
+    private Button nextButton;
+
+    @FXML
+    private Label pageNumber;
+
 
 
     public void setService(Service service) {
@@ -103,14 +114,11 @@ public class MainController implements Observer<EntityChangeEvent>{
 
     private void initModel(){
 
-        List<Utilizator> lista = new ArrayList<>();
         boolean hasRequests = false;
 
-        for (Utilizator u : service.get_users_friends(user)){
-            Friendship friendship = service.find_friendship(new Tuple<>(u.getId(), user.getId())).get();
-            if(friendship.getStatus().equals("Friends"))
-                lista.add(u);
-            else if(friendship.getStatus().equals("Requested") && !friendship.getId_request().equals(user.getId()))
+        for (Utilizator u : service.getUsersFriends(user)){
+            Friendship friendship = service.findFriendship(new Tuple<>(u.getId(), user.getId())).get();
+            if(friendship.getStatus().equals("Requested") && !friendship.getId_request().equals(user.getId()))
                 hasRequests = true;
         }
 
@@ -118,13 +126,40 @@ public class MainController implements Observer<EntityChangeEvent>{
             friendRequestButton.setText("Friend Requests (new)");
         }
 
-        ObservableList<Utilizator> friends = FXCollections.observableArrayList(lista);
-        friendTable.setItems(friends);
-
-        if(service.find_user(user.getId()).isPresent()){
-            user = service.find_user(user.getId()).get();
+        if(service.findUser(user.getId()).isPresent()){
+            user = service.findUser(user.getId()).get();
             usersNamesLabel.setText(user.getFirstName() + " " + user.getLastName());
         }
+
+
+        Page<Friendship> pageFriendships = service.findUsersFriends(new Pageable(pageSize, currentPage), user);
+
+        int maximumFriendships = (int) Math.ceil((double) pageFriendships.getTotalNumberOfElements() / pageSize) - 1;
+        if(maximumFriendships == -1){
+            maximumFriendships = 0;
+        }
+
+        if(currentPage > maximumFriendships){
+            currentPage = maximumFriendships;
+            pageFriendships = service.getAllFriendships(new Pageable(pageSize, currentPage));
+        }
+
+        int nrOfElements = pageFriendships.getTotalNumberOfElements();
+
+        previousButton.setDisable(currentPage == 0);
+        nextButton.setDisable((currentPage + 1) * pageSize >= nrOfElements);
+
+        ObservableList<Utilizator> friends = FXCollections.observableArrayList();
+
+        for (Friendship friendship : pageFriendships.getElementsOnPage()){
+
+            Utilizator friend = friendship.getId_user_1().equals(user.getId()) ? service.findUser(friendship.getId_user_2()).get()
+                    : service.findUser(friendship.getId_user_1()).get();
+            friends.add(friend);
+        }
+
+        friendTable.setItems(friends);
+        pageNumber.setText((currentPage + 1) + " / " + (maximumFriendships + 1));
 
     }
 
@@ -139,11 +174,11 @@ public class MainController implements Observer<EntityChangeEvent>{
             messageLabel.setText("");
 
             String firstName = friendsFirstNameField.textProperty().get();
-            Long id = service.get_user_id_by_name(firstName);
-            Optional<Utilizator> friend = service.find_user(id);
+            Long id = service.getUserIdByName(firstName);
+            Optional<Utilizator> friend = service.findUser(id);
             if(friend.isPresent()){
 
-                Optional<Friendship> friendship = service.find_friendship(new Tuple<>(user.getId(), friend.get().getId()));
+                Optional<Friendship> friendship = service.findFriendship(new Tuple<>(user.getId(), friend.get().getId()));
                 if(friendship.isPresent()){
 
                     if(friendship.get().getStatus().equals("Friends")) {
@@ -159,7 +194,7 @@ public class MainController implements Observer<EntityChangeEvent>{
                         else {
                             friendship.get().setStatus("Friends");
                             friendship.get().setDate(LocalDateTime.now());
-                            service.update_friendship(friendship.get());
+                            service.updateFriendship(friendship.get());
                             messageLabel.setText("Friend added");
                         }
 
@@ -167,7 +202,7 @@ public class MainController implements Observer<EntityChangeEvent>{
 
                 }
                 else{
-                    service.add_friendship(user.getId(), friend.get().getId(), user.getId());
+                    service.addFriendship(user.getId(), friend.get().getId(), user.getId());
                     messageLabel.setText("Friend request sent");
                 }
 
@@ -192,14 +227,14 @@ public class MainController implements Observer<EntityChangeEvent>{
             messageLabel.setText("");
 
             String firstName = friendsFirstNameField.textProperty().get();
-            Long id = service.get_user_id_by_name(firstName);
-            Optional<Utilizator> friend = service.find_user(id);
+            Long id = service.getUserIdByName(firstName);
+            Optional<Utilizator> friend = service.findUser(id);
 
             if(friend.isPresent()){
 
-                Optional<Friendship> friendship = service.find_friendship(new Tuple<>(user.getId(), friend.get().getId()));
+                Optional<Friendship> friendship = service.findFriendship(new Tuple<>(user.getId(), friend.get().getId()));
                 if(friendship.isPresent()){
-                    service.remove_friendship(user.getId(), friend.get().getId());
+                    service.removeFriendship(user.getId(), friend.get().getId());
                 } else{
                     messageLabel.setText("Friend not found");
                 }
@@ -216,7 +251,7 @@ public class MainController implements Observer<EntityChangeEvent>{
 
     public void onButtonDelete(){
 
-        service.remove_user(user);
+        service.removeUser(user);
 
         onButtonBackClicked();
     }
@@ -314,8 +349,8 @@ public class MainController implements Observer<EntityChangeEvent>{
     public void onButtonChatClicked(){
 
         String friendName = friendsFirstNameField.getText();
-        Long id_friend = service.get_user_id_by_name(friendName);
-        Optional<Utilizator> friend = service.find_user(id_friend);
+        Long id_friend = service.getUserIdByName(friendName);
+        Optional<Utilizator> friend = service.findUser(id_friend);
 
         if(friend.isPresent()) {
             openChat(friend.get());
@@ -325,6 +360,17 @@ public class MainController implements Observer<EntityChangeEvent>{
             messageLabel.setText("Friend not found");
         }
 
+    }
+
+
+    public void onButtonNextClicked(){
+        currentPage++;
+        initModel();
+    }
+
+    public void onButtonPreviousClicked(){
+        currentPage--;
+        initModel();
     }
 
 
