@@ -204,7 +204,7 @@ public class RequestsController implements Observer<EntityChangeEvent> {
         List<Friendship> friendships = new ArrayList<>();
         for (Friendship friendship : iterable) {
             if(friendship.getId_user_1().equals(user.getId()) || friendship.getId_user_2().equals(user.getId()))
-                if(friendship.getStatus().equals("Friends") || !friendship.getId_request().equals(user.getId()))
+                if(!friendship.getStatus().equals("Friends") && !friendship.getId_request().equals(user.getId()))
                     friendships.add(friendship);
         }
 
