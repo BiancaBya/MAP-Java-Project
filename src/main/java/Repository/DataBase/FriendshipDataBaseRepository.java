@@ -242,13 +242,16 @@ public class FriendshipDataBaseRepository implements FriendshipPagingRepository<
                              + "LIMIT ? OFFSET ?");
 
              PreparedStatement countStatement = connection.prepareStatement
-                     ("SELECT COUNT(*) AS count FROM Friendships")
+                     ("SELECT COUNT(*) AS count FROM Friendships WHERE (friendship_status LIKE 'Friends' AND (id_user_1 = ? or id_user_2 = ?))")
         ){
 
             pageStatement.setLong(1, user.getId());
             pageStatement.setLong(2, user.getId());
             pageStatement.setInt(3, pageable.getPageSize());
             pageStatement.setInt(4, pageable.getPageNumber() * pageable.getPageSize());
+
+            countStatement.setLong(1, user.getId());
+            countStatement.setLong(2, user.getId());
 
             try(ResultSet pageResultSet = pageStatement.executeQuery();
                 ResultSet countResultSet = countStatement.executeQuery()){
