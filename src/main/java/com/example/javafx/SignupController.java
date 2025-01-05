@@ -1,6 +1,6 @@
 package com.example.javafx;
 
-import Domain.Utilizator;
+import Domain.User;
 import Service.Service;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -66,7 +66,7 @@ public class SignupController {
             } else {
 
                 Long id = service.getUserIdByEmail(email);
-                Optional<Utilizator> user = service.findUser(id);
+                Optional<User> user = service.findUser(id);
 
                 if (user.isPresent()) {
 
@@ -74,7 +74,7 @@ public class SignupController {
 
                 } else {
 
-                    Utilizator new_user = new Utilizator(firstName, lastName, password, email);
+                    User new_user = new User(firstName, lastName, password, email);
                     service.addUser(new_user);
                     signupMessage.setText("User created");
 

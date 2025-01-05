@@ -1,19 +1,15 @@
 package com.example.javafx;
 
 import Domain.Message;
-import Domain.Utilizator;
+import Domain.User;
 import Service.Service;
 
-import Utils.Observer.Observable;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -24,9 +20,9 @@ public class MessageController {
 
     private Service service;
 
-    private Utilizator user;
+    private User user;
 
-    private Utilizator friend;
+    private User friend;
 
     private ObservableList<Message> model = FXCollections.observableArrayList();
 
@@ -46,11 +42,11 @@ public class MessageController {
         initModel();
     }
 
-    public void setUser(Utilizator user){
+    public void setUser(User user){
         this.user = user;
     }
 
-    public void setFriend(Utilizator friend){
+    public void setFriend(User friend){
         this.friend = friend;
     }
 

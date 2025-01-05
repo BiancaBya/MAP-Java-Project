@@ -3,7 +3,7 @@ package Service;
 import Domain.Friendship;
 import Domain.Message;
 import Domain.Tuple;
-import Domain.Utilizator;
+import Domain.User;
 import Domain.Validators.ValidationException;
 
 import Repository.Repository;
@@ -22,30 +22,30 @@ import java.util.stream.Collectors;
 
 public class Service implements Observable<EntityChangeEvent>{
 
-    private final Repository<Long, Utilizator> repositoryUsers;
+    private final Repository<Long, User> repositoryUsers;
     private final FriendshipPagingRepository<Tuple<Long, Long>, Friendship> repositoryFriendships;
     private final Repository<Long, Message> repositoryMessages;
 
     private final List<Observer<EntityChangeEvent>> observers = new ArrayList<>();
 
-    public Service(Repository<Long, Utilizator> repositoryUsers, FriendshipPagingRepository<Tuple<Long, Long>, Friendship> repositoryFriendships, Repository<Long, Message> repositoryMessages) {
+    public Service(Repository<Long, User> repositoryUsers, FriendshipPagingRepository<Tuple<Long, Long>, Friendship> repositoryFriendships, Repository<Long, Message> repositoryMessages) {
         this.repositoryUsers = repositoryUsers;
         this.repositoryFriendships = repositoryFriendships;
         this.repositoryMessages = repositoryMessages;
     }
 
-    public Optional<Utilizator> addUser(Utilizator user) {
+    public Optional<User> addUser(User user) {
 
-        Iterable<Utilizator> utilizatori = repositoryUsers.findAll();
-        for (Utilizator u : utilizatori) {
+        Iterable<User> utilizatori = repositoryUsers.findAll();
+        for (User u : utilizatori) {
             if(u.getFirstName().equals(user.getFirstName()) && u.getLastName().equals(user.getLastName())) {
                 return Optional.of(u);
             }
         }
 
-        Optional<Utilizator> savedUser = repositoryUsers.save(user);
+        Optional<User> savedUser = repositoryUsers.save(user);
         if (savedUser.isEmpty()) {
-            for (Utilizator u : utilizatori) {
+            for (User u : utilizatori) {
                 if(u.getFirstName().equals(user.getFirstName()) && u.getLastName().equals(user.getLastName())) {
 
                     EntityChangeEvent event = new EntityChangeEvent(ChangeEventType.ADD_USER, u);
@@ -60,14 +60,14 @@ public class Service implements Observable<EntityChangeEvent>{
 
     }
 
-    public Optional<Utilizator> removeUser(Utilizator user) {
+    public Optional<User> removeUser(User user) {
 
-        Optional<Utilizator> userDB = repositoryUsers.findOne(user.getId());
+        Optional<User> userDB = repositoryUsers.findOne(user.getId());
 
         if (userDB.isPresent()) {
 
             List<Tuple<Long, Long>> lista_ind = new ArrayList<>();
-            List<Utilizator> friends = getUsersFriends(user);
+            List<User> friends = getUsersFriends(user);
 
             friends.forEach(friend -> lista_ind.add(new Tuple<>(friend.getId(), user.getId())));
             lista_ind.forEach(tuple -> removeFriendship(tuple.getLeft(), tuple.getRight()));
@@ -81,12 +81,12 @@ public class Service implements Observable<EntityChangeEvent>{
         return Optional.empty();
     }
 
-    public Optional<Utilizator> updateUser(Utilizator user) {
+    public Optional<User> updateUser(User user) {
 
-        Optional<Utilizator> oldUser = repositoryUsers.findOne(user.getId());
+        Optional<User> oldUser = repositoryUsers.findOne(user.getId());
         if (oldUser.isPresent()) {
 
-            Optional<Utilizator> newUser = repositoryUsers.update(user);
+            Optional<User> newUser = repositoryUsers.update(user);
             if (newUser.isEmpty()) {
                 EntityChangeEvent event = new EntityChangeEvent(ChangeEventType.MODIFY_USER, user, oldUser.get());
                 notifyObservers(event);
@@ -98,7 +98,7 @@ public class Service implements Observable<EntityChangeEvent>{
         return oldUser;
     }
 
-    public Optional<Utilizator> findUser(Long id) {
+    public Optional<User> findUser(Long id) {
         return repositoryUsers.findOne(id);
     }
 
@@ -106,22 +106,22 @@ public class Service implements Observable<EntityChangeEvent>{
         return repositoryFriendships.findOne(id);
     }
 
-    public Iterable<Utilizator> findAllUsers() {
+    public Iterable<User> findAllUsers() {
 
-        Iterable<Utilizator> users =  repositoryUsers.findAll();
+        Iterable<User> users =  repositoryUsers.findAll();
 
         repositoryFriendships.findAll().forEach(f -> {
             Long id1 = f.getId_user_1();
             Long id2 = f.getId_user_2();
-            for (Utilizator u : users){
+            for (User u : users){
 
                 if (u.getId().equals(id1)){
-                    Optional<Utilizator> friend = repositoryUsers.findOne(id2);
+                    Optional<User> friend = repositoryUsers.findOne(id2);
                     friend.ifPresent(u::addFriend);
                 }
 
                 else if (u.getId().equals(id2)){
-                    Optional<Utilizator> friend = repositoryUsers.findOne(id1);
+                    Optional<User> friend = repositoryUsers.findOne(id1);
                     friend.ifPresent(u::addFriend);
                 }
             }
@@ -139,8 +139,8 @@ public class Service implements Observable<EntityChangeEvent>{
 
     public void addFriendship(Long id1, Long id2, Long id_request) {
 
-        Optional<Utilizator> u1 = repositoryUsers.findOne(id1);
-        Optional<Utilizator> u2 = repositoryUsers.findOne(id2);
+        Optional<User> u1 = repositoryUsers.findOne(id1);
+        Optional<User> u2 = repositoryUsers.findOne(id2);
 
         u1.ifPresent(user1 -> u2.ifPresent(user2 -> {
             user1.addFriend(user2);
@@ -159,8 +159,8 @@ public class Service implements Observable<EntityChangeEvent>{
 
     public void removeFriendship(Long id1, Long id2) {
 
-        Optional<Utilizator> u1 = repositoryUsers.findOne(id1);
-        Optional<Utilizator> u2 = repositoryUsers.findOne(id2);
+        Optional<User> u1 = repositoryUsers.findOne(id1);
+        Optional<User> u2 = repositoryUsers.findOne(id2);
 
         u1.ifPresent(user1 -> u2.ifPresent(user2 -> {
             user2.removeFriend(user1);
@@ -193,11 +193,11 @@ public class Service implements Observable<EntityChangeEvent>{
     }
 
 
-    public void DFS(Utilizator user, boolean[] visited){
+    public void DFS(User user, boolean[] visited){
 
         visited[Integer.parseInt(user.getId().toString())] = true;
 
-        List<Utilizator> friends = getUsersFriends(user);
+        List<User> friends = getUsersFriends(user);
         friends.forEach(u -> {
             if (!visited[Integer.parseInt(u.getId().toString())]) {
                 DFS(u, visited);
@@ -208,15 +208,15 @@ public class Service implements Observable<EntityChangeEvent>{
 
     public int numberOfCommunities(){
 
-        Iterable<Utilizator> users = findAllUsers();
+        Iterable<User> users = findAllUsers();
         int nr_users = 0;
-        for (Utilizator u : users)
+        for (User u : users)
             nr_users = Integer.parseInt(u.getId().toString());
 
         int communities = 0;
 
         boolean[] visited = new boolean[nr_users + 1];
-        for (Utilizator u : users)
+        for (User u : users)
             if (!visited[Integer.parseInt(u.getId().toString())]){
                 communities++;
                 DFS(u, visited);
@@ -225,11 +225,11 @@ public class Service implements Observable<EntityChangeEvent>{
         return communities;
     }
 
-    public void DFSNr(Utilizator user, boolean[] visited, List<Utilizator> users){
+    public void DFSNr(User user, boolean[] visited, List<User> users){
 
         visited[Integer.parseInt(user.getId().toString())] = true;
 
-        List<Utilizator> friends = getUsersFriends(user);
+        List<User> friends = getUsersFriends(user);
         friends.forEach(u -> {
             if (!visited[Integer.parseInt(u.getId().toString())]) {
                 users.add(u);
@@ -242,21 +242,21 @@ public class Service implements Observable<EntityChangeEvent>{
 
     }
 
-    public List<Utilizator> biggestCommunity(){
+    public List<User> biggestCommunity(){
 
-        List<Utilizator> users = new ArrayList<>();
+        List<User> users = new ArrayList<>();
 
-        Iterable<Utilizator> users_iterator = findAllUsers();
+        Iterable<User> users_iterator = findAllUsers();
         int nr_users = 0;
-        for (Utilizator u : users_iterator)
+        for (User u : users_iterator)
             nr_users = Integer.parseInt(u.getId().toString());
 
         boolean[] visited = new boolean[nr_users + 1];
 
 
-        for (Utilizator u : users_iterator)
+        for (User u : users_iterator)
             if (!visited[Integer.parseInt(u.getId().toString())]){
-                List <Utilizator> communitiy = new ArrayList<>();
+                List <User> communitiy = new ArrayList<>();
                 communitiy.add(u);
                 DFSNr(u, visited, communitiy);
 
@@ -268,19 +268,19 @@ public class Service implements Observable<EntityChangeEvent>{
         return users;
     }
 
-    public List<Utilizator> getUsersFriends(Utilizator user){
+    public List<User> getUsersFriends(User user){
 
-        List<Utilizator> friends = new ArrayList<>();
+        List<User> friends = new ArrayList<>();
 
         for (Friendship f : repositoryFriendships.findAll()) {
             if(f.getId_user_1().equals(user.getId())){
                 friends.add(repositoryUsers.findOne(f.getId_user_2()).get());
-                Utilizator utilizator = repositoryUsers.findOne(f.getId_user_1()).get();
+                User utilizator = repositoryUsers.findOne(f.getId_user_1()).get();
                 repositoryUsers.findOne(f.getId_user_2()).get().addFriend(utilizator);
             }
             else if(f.getId_user_2().equals(user.getId())){
                 friends.add(repositoryUsers.findOne(f.getId_user_1()).get());
-                Utilizator utilizator = repositoryUsers.findOne(f.getId_user_2()).get();
+                User utilizator = repositoryUsers.findOne(f.getId_user_2()).get();
                 repositoryUsers.findOne(f.getId_user_1()).get().addFriend(utilizator);
             }
         }
@@ -291,7 +291,7 @@ public class Service implements Observable<EntityChangeEvent>{
 
     public Long getUserIdByName(String firstName){
 
-        for (Utilizator u : findAllUsers()){
+        for (User u : findAllUsers()){
             if (u.getFirstName().equals(firstName))
                 return u.getId();
         }
@@ -299,7 +299,7 @@ public class Service implements Observable<EntityChangeEvent>{
     }
 
     public Long getUserIdByEmail(String email){
-        for (Utilizator u : findAllUsers()){
+        for (User u : findAllUsers()){
             if(u.getEmail().equals(email))
                 return u.getId();
         }
@@ -307,7 +307,7 @@ public class Service implements Observable<EntityChangeEvent>{
     }
 
 
-    public List<Message> getMessagesBetween(Utilizator user, Utilizator friend){
+    public List<Message> getMessagesBetween(User user, User friend){
 
         Collection<Message> messages = (Collection<Message>) repositoryMessages.findAll();
 
@@ -320,7 +320,7 @@ public class Service implements Observable<EntityChangeEvent>{
     }
 
 
-    public boolean addMessage(Utilizator from, Utilizator to, String msg){
+    public boolean addMessage(User from, User to, String msg){
 
         try{
 
@@ -340,7 +340,7 @@ public class Service implements Observable<EntityChangeEvent>{
     }
 
 
-    public boolean addReply(Utilizator from, Utilizator to, String msg, Message reply){
+    public boolean addReply(User from, User to, String msg, Message reply){
 
         try{
 
@@ -365,7 +365,7 @@ public class Service implements Observable<EntityChangeEvent>{
     }
 
 
-    public Page<Friendship> findUsersFriends(Pageable pageable, Utilizator user){
+    public Page<Friendship> findUsersFriends(Pageable pageable, User user){
 
         return repositoryFriendships.getUsersFriends(pageable, user);
 

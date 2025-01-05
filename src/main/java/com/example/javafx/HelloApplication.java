@@ -1,10 +1,9 @@
 package com.example.javafx;
 
-import Console.Console;
 import Domain.Friendship;
 import Domain.Message;
 import Domain.Tuple;
-import Domain.Utilizator;
+import Domain.User;
 import Domain.Validators.FriendshipValidator;
 import Domain.Validators.UtilizatorValidator;
 import Repository.DataBase.FriendshipDataBaseRepository;
@@ -33,7 +32,7 @@ public class HelloApplication extends Application {
         String password = "parola";
         String url = "jdbc:postgresql://localhost:5432/LabMAP";
 
-        Repository<Long, Utilizator> userDBRepo = new UserDataBaseRepository(url, username, password, new UtilizatorValidator());
+        Repository<Long, User> userDBRepo = new UserDataBaseRepository(url, username, password, new UtilizatorValidator());
         FriendshipPagingRepository<Tuple<Long, Long>, Friendship> friendDBRepo = new FriendshipDataBaseRepository(url, username, password, new FriendshipValidator());
         Repository<Long, Message> messageDBRepo = new MessageDataBaseRepository(userDBRepo, url, username, password);
 

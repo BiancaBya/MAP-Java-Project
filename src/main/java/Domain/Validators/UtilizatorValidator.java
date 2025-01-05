@@ -1,10 +1,10 @@
 package Domain.Validators;
 
-import Domain.Utilizator;
+import Domain.User;
 
-public class UtilizatorValidator implements Validator<Utilizator> {
+public class UtilizatorValidator implements Validator<User> {
     @Override
-    public void validate(Utilizator entity) throws ValidationException {
+    public void validate(User entity) throws ValidationException {
 
         if(entity.getFirstName().equals(""))
             throw new ValidationException("Invalid first name");

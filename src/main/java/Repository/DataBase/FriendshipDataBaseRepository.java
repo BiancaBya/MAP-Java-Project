@@ -1,9 +1,8 @@
 package Repository.DataBase;
 
-import Domain.Utilizator;
+import Domain.User;
 import Domain.Validators.Validator;
 import Domain.Tuple;
-import Repository.Repository;
 import Repository.FriendshipPagingRepository;
 import Domain.Friendship;
 import Utils.Paging.Page;
@@ -232,7 +231,7 @@ public class FriendshipDataBaseRepository implements FriendshipPagingRepository<
 
 
     @Override
-    public Page<Friendship> getUsersFriends(Pageable pageable, Utilizator user) {
+    public Page<Friendship> getUsersFriends(Pageable pageable, User user) {
 
         List<Friendship> friendships = new ArrayList<>();
 

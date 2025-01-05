@@ -1,7 +1,7 @@
 package com.example.javafx;
 
 import Service.Service;
-import Domain.Utilizator;
+import Domain.User;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -35,7 +35,7 @@ public class LoginController {
         String password = passwordField.getText();
 
         Long id = service.getUserIdByEmail(email);
-        Optional<Utilizator> user = service.findUser(id);
+        Optional<User> user = service.findUser(id);
 
         if(user.isPresent()){
 
@@ -70,7 +70,7 @@ public class LoginController {
 
     }
 
-    private void openMainScene(Utilizator user){
+    private void openMainScene(User user){
 
         try{
 

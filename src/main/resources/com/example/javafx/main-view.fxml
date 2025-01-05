@@ -6,42 +6,46 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.MainController" spacing="10.0" alignment="CENTER" stylesheets="@../CSS/main-styles.css">
+<HBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.javafx.MainController" spacing="10.0" alignment="CENTER" stylesheets="@../CSS/main-styles.css">
 
-    <Label fx:id="usersNamesLabel"/>
-    <Label fx:id="messageLabel" />
-
-    <HBox fx:id="HBox" spacing="10.0" alignment="CENTER">
-        <Button fx:id="friendRequestButton" mnemonicParsing="false" onAction="#onFriendRequestButton" text="Friend Requests"/>
-        <Button fx:id="addFriendButton" mnemonicParsing="false" onAction="#onButtonAddFriend" text=" Add Friend " />
-        <Button fx:id="deleteFriendButton" mnemonicParsing="false" onAction="#onButtonDeleteFriend" text=" Delete Friend " />
-        <TextField fx:id="friendsFirstNameField" promptText="Friend's First Name" />
-    </HBox>
-
-    <Label text="Your Friends"/>
-
-    <TableView fx:id="friendTable">
-        <columns>
-            <TableColumn fx:id="friendFirstNameColumn" style="-fx-alignment: CENTER;" text="First Name"/>
-            <TableColumn fx:id="friendLastNameColumn" style="-fx-alignment: CENTER;" text="Last Name"/>
-        </columns>
-    </TableView>
-
-    <Label fx:id="pageNumber"/>
-
-    <HBox>
-        <Button fx:id="previousButton" text=" Previous " onAction="#onButtonPreviousClicked"/>
-        <Button fx:id="nextButton" text=" Next " onAction="#onButtonNextClicked"/>
-    </HBox>
-
-    <HBox fx:id="HBoxDeleteModify" alignment="CENTER" spacing="10.0">
-        <Button mnemonicParsing="false" onAction="#onButtonBackClicked" text="Back"/>
-        <Button mnemonicParsing="false" onAction="#onButtonChatClicked" text="Chat"/>
+    <VBox spacing="10.0" prefWidth="300" alignment="CENTER">
+        <Label fx:id="usersNamesLabel"/>
+        <Label fx:id="emailLabel"/>
         <Button fx:id="Delete" mnemonicParsing="false" onAction="#onButtonDelete" text="Delete Account"/>
         <Button fx:id="Modify" mnemonicParsing="false" onAction="#onButtonModify" text="Modify Account"/>
-    </HBox>
+        <Button fx:id="friendRequestButton" mnemonicParsing="false" onAction="#onFriendRequestButton" text="Friend Requests"/>
+        <Button mnemonicParsing="false" onAction="#onButtonChatClicked" text="Chat"/>
+        <Button mnemonicParsing="false" onAction="#onButtonBackClicked" text="Back"/>
+    </VBox>
 
-</VBox>
+    <VBox alignment="CENTER" spacing="10.0">
+        <Label fx:id="messageLabel" />
+
+        <HBox fx:id="HBox" spacing="10.0" alignment="CENTER">
+            <Button fx:id="addFriendButton" mnemonicParsing="false" onAction="#onButtonAddFriend" text=" Add Friend " />
+            <Button fx:id="deleteFriendButton" mnemonicParsing="false" onAction="#onButtonDeleteFriend" text=" Delete Friend " />
+            <TextField fx:id="friendsFirstNameField" promptText="Friend's First Name" />
+        </HBox>
+
+        <Label text="Your Friends"/>
+
+        <TableView fx:id="friendTable">
+            <columns>
+                <TableColumn fx:id="friendFirstNameColumn" style="-fx-alignment: CENTER;" text="First Name"/>
+                <TableColumn fx:id="friendLastNameColumn" style="-fx-alignment: CENTER;" text="Last Name"/>
+            </columns>
+        </TableView>
+
+        <Label fx:id="pageNumber"/>
+
+        <HBox>
+            <Button fx:id="previousButton" text=" Previous " onAction="#onButtonPreviousClicked"/>
+            <Button fx:id="nextButton" text=" Next " onAction="#onButtonNextClicked"/>
+        </HBox>
+
+    </VBox>
+
+</HBox>
 
 
 

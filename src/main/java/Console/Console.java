@@ -1,6 +1,6 @@
 package Console;
 
-import Domain.Utilizator;
+import Domain.User;
 import Service.Service;
 
 
@@ -52,10 +52,10 @@ public class Console {
                     String email = scanner.next();
 
                     Long id = 0L;
-                    for (Utilizator u : service.findAllUsers())
+                    for (User u : service.findAllUsers())
                         id = u.getId() + 1;
 
-                    Utilizator user = new Utilizator(firstName, lastName, password, email);
+                    User user = new User(firstName, lastName, password, email);
                     user.setId(id);
                     service.addUser(user);
                     break;
@@ -65,15 +65,15 @@ public class Console {
                     System.out.println("Enter user's First Name:");
                     String firstname = scanner.next();
                     Long id_utilizator = service.getUserIdByName(firstname);
-                    Optional<Utilizator> utilizator = service.findUser(id_utilizator);
+                    Optional<User> utilizator = service.findUser(id_utilizator);
 
                     utilizator.ifPresent(service::removeUser);
                     break;
 
                 case 3: // Print Users
 
-                    Iterable<Utilizator> users = service.findAllUsers();
-                    for (Utilizator u : users) {
+                    Iterable<User> users = service.findAllUsers();
+                    for (User u : users) {
                         System.out.println(u);
                     }
                     break;
@@ -114,7 +114,7 @@ public class Console {
                 case 7: // The biggest community
 
                     System.out.println("The biggest community is: ");
-                    for (Utilizator u : service.biggestCommunity())
+                    for (User u : service.biggestCommunity())
                         System.out.println(u);
                     break;
 

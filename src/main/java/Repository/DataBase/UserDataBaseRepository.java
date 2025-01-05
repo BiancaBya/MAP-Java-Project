@@ -1,8 +1,7 @@
 package Repository.DataBase;
 
 import Domain.Validators.Validator;
-import Repository.Repository;
-import Domain.Utilizator;
+import Domain.User;
 import Repository.PagingRepository;
 import Utils.Paging.Page;
 import Utils.Paging.Pageable;
@@ -10,16 +9,16 @@ import Utils.Paging.Pageable;
 import java.sql.*;
 import java.util.*;
 
-public class UserDataBaseRepository implements PagingRepository<Long, Utilizator> {
+public class UserDataBaseRepository implements PagingRepository<Long, User> {
 
     private final String url;
     private final String username;
     private final String password;
-    private final Validator<Utilizator> validator;
-    Map<Long, Utilizator> users = new HashMap<>();
+    private final Validator<User> validator;
+    Map<Long, User> users = new HashMap<>();
 
 
-    public UserDataBaseRepository(String url, String username, String password, Validator<Utilizator> validator) {
+    public UserDataBaseRepository(String url, String username, String password, Validator<User> validator) {
         this.url = url;
         this.password = password;
         this.username = username;
@@ -29,16 +28,16 @@ public class UserDataBaseRepository implements PagingRepository<Long, Utilizator
 
 
     @Override
-    public Optional<Utilizator> findOne(Long id) {
+    public Optional<User> findOne(Long id) {
         if (id == null)
             throw new IllegalArgumentException("id cannot be null");
         return Optional.ofNullable(users.get(id));
     }
 
     @Override
-    public Iterable<Utilizator> findAll() {
+    public Iterable<User> findAll() {
 
-        Set<Utilizator> usersDataBase = new HashSet<>();
+        Set<User> usersDataBase = new HashSet<>();
 
         try(Connection connection = DriverManager.getConnection(url, username, password);
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM Users");
@@ -52,7 +51,7 @@ public class UserDataBaseRepository implements PagingRepository<Long, Utilizator
                 String password = resultSet.getString("password");
                 String email = resultSet.getString("email");
 
-                Utilizator utilizator = new Utilizator(firstName, lastName, password, email);
+                User utilizator = new User(firstName, lastName, password, email);
                 utilizator.setId(id);
                 usersDataBase.add(utilizator);
             }
@@ -67,7 +66,7 @@ public class UserDataBaseRepository implements PagingRepository<Long, Utilizator
     }
 
     @Override
-    public Optional<Utilizator> save(Utilizator entity) {
+    public Optional<User> save(User entity) {
 
         if (entity == null) {
             throw new IllegalArgumentException("Entity cannot be null");
@@ -102,9 +101,9 @@ public class UserDataBaseRepository implements PagingRepository<Long, Utilizator
     }
 
     @Override
-    public Optional<Utilizator> delete(Long id) {
+    public Optional<User> delete(Long id) {
 
-        Optional<Utilizator> user = Optional.ofNullable(users.get(id));
+        Optional<User> user = Optional.ofNullable(users.get(id));
         int rez = -1;
 
         if (user.isPresent()) {
@@ -130,7 +129,7 @@ public class UserDataBaseRepository implements PagingRepository<Long, Utilizator
 
 
     @Override
-    public Optional<Utilizator> update(Utilizator entity) {
+    public Optional<User> update(User entity) {
 
         if (entity == null) {
             throw new IllegalArgumentException("Entity cannot be null");
@@ -138,7 +137,7 @@ public class UserDataBaseRepository implements PagingRepository<Long, Utilizator
 
         validator.validate(entity);
 
-        Optional<Utilizator> existingUser = Optional.ofNullable(users.get(entity.getId()));
+        Optional<User> existingUser = Optional.ofNullable(users.get(entity.getId()));
         int rez = -1;
 
         if (existingUser.isPresent()) {
@@ -174,9 +173,9 @@ public class UserDataBaseRepository implements PagingRepository<Long, Utilizator
     }
 
     @Override
-    public Page<Utilizator> findAllOnPage(Pageable pageable) {
+    public Page<User> findAllOnPage(Pageable pageable) {
 
-        List<Utilizator> usersList = new ArrayList<>();
+        List<User> usersList = new ArrayList<>();
 
         try (Connection connection = DriverManager.getConnection(url, username, password);
         PreparedStatement pageStatement = connection.prepareStatement("SELECT * FROM Users " + "LIMIT ? OFFSET ?");
@@ -196,7 +195,7 @@ public class UserDataBaseRepository implements PagingRepository<Long, Utilizator
                     String password = pageResultSet.getString("password");
                     String email = pageResultSet.getString("email");
 
-                    Utilizator user = new Utilizator(firstName, lastName, password, email);
+                    User user = new User(firstName, lastName, password, email);
                     user.setId(id);
                     usersList.add(user);
 

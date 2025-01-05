@@ -1,9 +1,7 @@
 package Repository.DataBase;
 
-import Domain.Friendship;
 import Domain.Message;
-import Domain.Utilizator;
-import Domain.Validators.Validator;
+import Domain.User;
 import Repository.Repository;
 
 import java.sql.*;
@@ -15,9 +13,9 @@ public class MessageDataBaseRepository implements Repository<Long, Message> {
     private final String url;
     private final String username;
     private final String password;
-    private final Repository<Long, Utilizator> userRepository;
+    private final Repository<Long, User> userRepository;
 
-    public MessageDataBaseRepository(Repository<Long, Utilizator> userRepository, String url, String username, String password) {
+    public MessageDataBaseRepository(Repository<Long, User> userRepository, String url, String username, String password) {
         this.userRepository = userRepository;
         this.url = url;
         this.username = username;
@@ -124,8 +122,8 @@ public class MessageDataBaseRepository implements Repository<Long, Message> {
                     reply_id = null;
                 }
 
-                Utilizator from = userRepository.findOne(id_from).get();
-                List<Utilizator> to = Collections.singletonList(userRepository.findOne(id_to).get());
+                User from = userRepository.findOne(id_from).get();
+                List<User> to = Collections.singletonList(userRepository.findOne(id_to).get());
 
                 Message messageDB = new Message(from, to, message, date);
                 messageDB.setId(id_message);

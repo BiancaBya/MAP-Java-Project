@@ -1,6 +1,6 @@
 package com.example.javafx;
 
-import Domain.Utilizator;
+import Domain.User;
 import Service.Service;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,7 +15,7 @@ public class ModifyController {
 
     private Service service;
 
-    private Utilizator user;
+    private User user;
 
     @FXML
     private TextField firstNameField;
@@ -34,7 +34,7 @@ public class ModifyController {
         this.service = service;
     }
 
-    public void setUser(Utilizator user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -45,7 +45,7 @@ public class ModifyController {
         String email = emailField.getText().isEmpty() ? user.getEmail() : emailField.getText();
         Long id = user.getId();
 
-        Utilizator new_user = new Utilizator(firstName, lastName, user.getPassword(), email);
+        User new_user = new User(firstName, lastName, user.getPassword(), email);
         new_user.setId(id);
 
         service.updateUser(new_user);

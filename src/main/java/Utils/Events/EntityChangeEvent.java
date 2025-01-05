@@ -1,21 +1,21 @@
 package Utils.Events;
 
-import Domain.Utilizator;
+import Domain.User;
 import Domain.Friendship;
 
 public class EntityChangeEvent implements Event {
 
     private ChangeEventType type;
-    private Utilizator userData, userOldData;
+    private User userData, userOldData;
     private Friendship friendshipData, friendOldData;
 
 
-    public EntityChangeEvent(ChangeEventType type, Utilizator userData) {
+    public EntityChangeEvent(ChangeEventType type, User userData) {
         this.type = type;
         this.userData = userData;
     }
 
-    public EntityChangeEvent(ChangeEventType type, Utilizator userData, Utilizator userOldData) {
+    public EntityChangeEvent(ChangeEventType type, User userData, User userOldData) {
         this.type = type;
         this.userData = userData;
         this.userOldData = userOldData;
@@ -36,11 +36,11 @@ public class EntityChangeEvent implements Event {
     public ChangeEventType getType() {
         return type;
     }
-    public Utilizator getUserData() {
+    public User getUserData() {
         return userData;
     }
 
-    public Utilizator getUserOldData() {
+    public User getUserOldData() {
         return userOldData;
     }
 

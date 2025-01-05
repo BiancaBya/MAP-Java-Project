@@ -3,17 +3,16 @@ package Domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
-public class Utilizator extends Entity<Long>{
+public class User extends Entity<Long>{
 
     private String firstName;
     private String lastName;
     private String password;
-    private List<Utilizator> friends;
+    private List<User> friends;
     private String email;
 
-    public Utilizator(String firstName, String lastName, String password, String email) {
+    public User(String firstName, String lastName, String password, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
@@ -41,11 +40,11 @@ public class Utilizator extends Entity<Long>{
 
     public void setPassword(String password) {this.password = password;}
 
-    public List<Utilizator> getFriends() {
+    public List<User> getFriends() {
         return friends;
     }
 
-    public void setFriends(List<Utilizator> friends) {
+    public void setFriends(List<User> friends) {
         this.friends = new ArrayList<>(friends);
     }
 
@@ -53,11 +52,11 @@ public class Utilizator extends Entity<Long>{
 
     public void setEmail(String email) {this.email = email;}
 
-    public void addFriend(Utilizator friend) {
+    public void addFriend(User friend) {
         this.friends.add(friend);
     }
 
-    public void removeFriend(Utilizator friend) {
+    public void removeFriend(User friend) {
         friends.remove(friend);
     }
 
@@ -65,7 +64,7 @@ public class Utilizator extends Entity<Long>{
     public String toString() {
 
         StringBuilder prieteni = new StringBuilder();
-        for (Utilizator friend : friends) {
+        for (User friend : friends) {
             prieteni.append(friend.getFirstName());
             prieteni.append(" ");
             prieteni.append(friend.getLastName());
@@ -80,8 +79,8 @@ public class Utilizator extends Entity<Long>{
     public boolean equals(Object o) {
 
         if (this == o) return true;
-        if (!(o instanceof Utilizator)) return false;
-        Utilizator that = (Utilizator) o;
+        if (!(o instanceof User)) return false;
+        User that = (User) o;
 
         return Objects.equals(getId(), that.getId());
     }

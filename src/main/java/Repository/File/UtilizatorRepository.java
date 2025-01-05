@@ -1,24 +1,24 @@
 package Repository.File;
 
 import Domain.Validators.Validator;
-import Domain.Utilizator;
+import Domain.User;
 
-public class UtilizatorRepository extends AbstractFileRepository<Long, Utilizator>{
+public class UtilizatorRepository extends AbstractFileRepository<Long, User>{
 
-    public UtilizatorRepository(Validator<Utilizator> validator, String fileName) {
+    public UtilizatorRepository(Validator<User> validator, String fileName) {
         super(validator, fileName);
     }
 
     @Override
-    public Utilizator createEntity(String line) {
+    public User createEntity(String line) {
         String[] splited = line.split(";");
-        Utilizator u = new Utilizator(splited[1], splited[2], splited[3], splited[4]);
+        User u = new User(splited[1], splited[2], splited[3], splited[4]);
         u.setId(Long.parseLong(splited[0]));
         return u;
     }
 
     @Override
-    public String saveEntity(Utilizator entity) {
+    public String saveEntity(User entity) {
         String s = entity.getId() + ";" + entity.getFirstName() + ";" + entity.getLastName();
         return s;
     }

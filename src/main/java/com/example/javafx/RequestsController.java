@@ -2,7 +2,7 @@ package com.example.javafx;
 
 import Domain.Friendship;
 import Domain.Tuple;
-import Domain.Utilizator;
+import Domain.User;
 import Service.Service;
 import Utils.Observer.Observer;
 import Utils.Events.EntityChangeEvent;
@@ -28,7 +28,7 @@ public class RequestsController implements Observer<EntityChangeEvent> {
 
     private Service service;
 
-    private Utilizator user;
+    private User user;
 
     private ObservableList<Friendship> model = FXCollections.observableArrayList();
 
@@ -69,7 +69,7 @@ public class RequestsController implements Observer<EntityChangeEvent> {
         initModel();
     }
 
-    public void setUser(Utilizator user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -96,7 +96,7 @@ public class RequestsController implements Observer<EntityChangeEvent> {
 
         firstNameColumn.setCellValueFactory(data -> {
             Friendship friendship = data.getValue();
-            Utilizator friend = (friendship.getId_user_1().equals(user.getId())) ?
+            User friend = (friendship.getId_user_1().equals(user.getId())) ?
                     service.findUser(friendship.getId_user_2()).get() :
                     service.findUser(friendship.getId_user_1()).get();
             return new SimpleStringProperty(friend.getFirstName());
@@ -105,7 +105,7 @@ public class RequestsController implements Observer<EntityChangeEvent> {
 
         lastNameColumn.setCellValueFactory(data -> {
             Friendship friendship = data.getValue();
-            Utilizator friend = (friendship.getId_user_1().equals(user.getId())) ?
+            User friend = (friendship.getId_user_1().equals(user.getId())) ?
                     service.findUser(friendship.getId_user_2()).get() :
                     service.findUser(friendship.getId_user_1()).get();
             return new SimpleStringProperty(friend.getLastName());
@@ -126,7 +126,7 @@ public class RequestsController implements Observer<EntityChangeEvent> {
         }
         else{
             Long id = service.getUserIdByName(firstName);
-            Optional<Utilizator> friend = service.findUser(id);
+            Optional<User> friend = service.findUser(id);
             if(friend.isPresent()){
 
                 Optional<Friendship> friendship = service.findFriendship(new Tuple<>(user.getId(), friend.get().getId()));
@@ -169,7 +169,7 @@ public class RequestsController implements Observer<EntityChangeEvent> {
         }
         else{
             Long id = service.getUserIdByName(firstName);
-            Optional<Utilizator> friend = service.findUser(id);
+            Optional<User> friend = service.findUser(id);
             if(friend.isPresent()){
 
                 Optional<Friendship> friendship = service.findFriendship(new Tuple<>(user.getId(), friend.get().getId()));

@@ -3,8 +3,7 @@ package com.example.javafx;
 import Domain.Friendship;
 import Domain.Tuple;
 import Service.Service;
-import Domain.Utilizator;
-import Utils.Observer.Observable;
+import Domain.User;
 import Utils.Observer.Observer;
 import Utils.Events.EntityChangeEvent;
 
@@ -22,17 +21,15 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class MainController implements Observer<EntityChangeEvent>{
 
     private Service service;
 
-    private Utilizator user;
+    private User user;
 
-    ObservableList<Utilizator> model = FXCollections.observableArrayList();
+    ObservableList<User> model = FXCollections.observableArrayList();
 
     private int currentPage = 0;
 
@@ -42,13 +39,16 @@ public class MainController implements Observer<EntityChangeEvent>{
     private Label usersNamesLabel;
 
     @FXML
-    private TableView<Utilizator> friendTable;
+    private Label emailLabel;
 
     @FXML
-    private TableColumn<Utilizator, String> friendFirstNameColumn;
+    private TableView<User> friendTable;
 
     @FXML
-    private TableColumn<Utilizator, String> friendLastNameColumn;
+    private TableColumn<User, String> friendFirstNameColumn;
+
+    @FXML
+    private TableColumn<User, String> friendLastNameColumn;
 
     @FXML
     private HBox HBox;
@@ -67,9 +67,6 @@ public class MainController implements Observer<EntityChangeEvent>{
 
     @FXML
     private Label messageLabel;
-
-    @FXML
-    private HBox HBoxDeleteModify;
 
     @FXML
     private Button Delete;
@@ -94,7 +91,7 @@ public class MainController implements Observer<EntityChangeEvent>{
         initModel();
     }
 
-    public void setUser(Utilizator user){
+    public void setUser(User user){
         this.user = user;
     }
 
@@ -116,7 +113,7 @@ public class MainController implements Observer<EntityChangeEvent>{
 
         boolean hasRequests = false;
 
-        for (Utilizator u : service.getUsersFriends(user)){
+        for (User u : service.getUsersFriends(user)){
             Friendship friendship = service.findFriendship(new Tuple<>(u.getId(), user.getId())).get();
             if(friendship.getStatus().equals("Requested") && !friendship.getId_request().equals(user.getId()))
                 hasRequests = true;
@@ -129,6 +126,7 @@ public class MainController implements Observer<EntityChangeEvent>{
         if(service.findUser(user.getId()).isPresent()){
             user = service.findUser(user.getId()).get();
             usersNamesLabel.setText(user.getFirstName() + " " + user.getLastName());
+            emailLabel.setText("Email: " + user.getEmail());
         }
 
 
@@ -149,11 +147,11 @@ public class MainController implements Observer<EntityChangeEvent>{
         previousButton.setDisable(currentPage == 0);
         nextButton.setDisable((currentPage + 1) * pageSize >= nrOfElements);
 
-        ObservableList<Utilizator> friends = FXCollections.observableArrayList();
+        ObservableList<User> friends = FXCollections.observableArrayList();
 
         for (Friendship friendship : pageFriendships.getElementsOnPage()){
 
-            Utilizator friend = friendship.getId_user_1().equals(user.getId()) ? service.findUser(friendship.getId_user_2()).get()
+            User friend = friendship.getId_user_1().equals(user.getId()) ? service.findUser(friendship.getId_user_2()).get()
                     : service.findUser(friendship.getId_user_1()).get();
             friends.add(friend);
         }
@@ -175,7 +173,7 @@ public class MainController implements Observer<EntityChangeEvent>{
 
             String firstName = friendsFirstNameField.textProperty().get();
             Long id = service.getUserIdByName(firstName);
-            Optional<Utilizator> friend = service.findUser(id);
+            Optional<User> friend = service.findUser(id);
             if(friend.isPresent()){
 
                 Optional<Friendship> friendship = service.findFriendship(new Tuple<>(user.getId(), friend.get().getId()));
@@ -228,7 +226,7 @@ public class MainController implements Observer<EntityChangeEvent>{
 
             String firstName = friendsFirstNameField.textProperty().get();
             Long id = service.getUserIdByName(firstName);
-            Optional<Utilizator> friend = service.findUser(id);
+            Optional<User> friend = service.findUser(id);
 
             if(friend.isPresent()){
 
@@ -323,7 +321,7 @@ public class MainController implements Observer<EntityChangeEvent>{
 
     }
 
-    private void openChat(Utilizator friend){
+    private void openChat(User friend){
 
         try{
 
@@ -350,7 +348,7 @@ public class MainController implements Observer<EntityChangeEvent>{
 
         String friendName = friendsFirstNameField.getText();
         Long id_friend = service.getUserIdByName(friendName);
-        Optional<Utilizator> friend = service.findUser(id_friend);
+        Optional<User> friend = service.findUser(id_friend);
 
         if(friend.isPresent()) {
             openChat(friend.get());

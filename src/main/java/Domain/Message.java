@@ -7,14 +7,14 @@ import java.util.List;
 public class Message extends Entity<Long>{
 
     private Long id;
-    private Utilizator from;
-    private List<Utilizator> to;
+    private User from;
+    private List<User> to;
     private String message;
     private LocalDateTime date;
     private Message reply;
 
 
-    public Message(Utilizator from, List<Utilizator> to, String message, LocalDateTime date) {
+    public Message(User from, List<User> to, String message, LocalDateTime date) {
         this.from = from;
         this.to = to;
         this.message = message;
@@ -22,7 +22,7 @@ public class Message extends Entity<Long>{
         this.reply = null;
     }
 
-    public Message(Utilizator from, List<Utilizator> to, String message){
+    public Message(User from, List<User> to, String message){
         this.from = from;
         this.to = to;
         this.message = message;
@@ -30,7 +30,7 @@ public class Message extends Entity<Long>{
         this.reply = null;
     }
 
-    public Message(Utilizator from, List<Utilizator> to, String message, Message reply) {
+    public Message(User from, List<User> to, String message, Message reply) {
         this.from = from;
         this.to = to;
         this.message = message;
@@ -48,19 +48,19 @@ public class Message extends Entity<Long>{
         this.id = id;
     }
 
-    public Utilizator getFrom() {
+    public User getFrom() {
         return from;
     }
 
-    public void setFrom(Utilizator from) {
+    public void setFrom(User from) {
         this.from = from;
     }
 
-    public List<Utilizator> getTo() {
+    public List<User> getTo() {
         return to;
     }
 
-    public void setTo(List<Utilizator> to) {
+    public void setTo(List<User> to) {
         this.to = to;
     }
 
