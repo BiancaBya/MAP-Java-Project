@@ -34,19 +34,14 @@ public class LoginController {
         String email = emailField.getText();
         String password = passwordField.getText();
 
-        Long id = service.getUserIdByEmail(email);
-        Optional<User> user = service.findUser(id);
+        User logedInUser = service.login(email, password);
 
-        if(user.isPresent()){
+        if(logedInUser != null){
 
-            if(password.equals(user.get().getPassword())){
-                openMainScene(user.get());
-            }else{
-                loginMessage.setText("Wrong Password");
-            }
+            openMainScene(logedInUser);
 
         } else{
-            loginMessage.setText("User not found");
+            loginMessage.setText("Wrong credentials");
         }
     }
 

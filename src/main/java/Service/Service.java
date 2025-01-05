@@ -16,6 +16,8 @@ import Utils.Events.ChangeEventType;
 import Utils.Paging.Page;
 import Utils.Paging.Pageable;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,16 +38,20 @@ public class Service implements Observable<EntityChangeEvent>{
 
     public Optional<User> addUser(User user) {
 
-        Iterable<User> utilizatori = repositoryUsers.findAll();
-        for (User u : utilizatori) {
+        Iterable<User> users = repositoryUsers.findAll();
+        for (User u : users) {
             if(u.getFirstName().equals(user.getFirstName()) && u.getLastName().equals(user.getLastName())) {
                 return Optional.of(u);
             }
         }
 
+        String hashedPassword = hashPassword(user.getPassword());
+        user.setPassword(hashedPassword);
+
         Optional<User> savedUser = repositoryUsers.save(user);
+
         if (savedUser.isEmpty()) {
-            for (User u : utilizatori) {
+            for (User u : users) {
                 if(u.getFirstName().equals(user.getFirstName()) && u.getLastName().equals(user.getLastName())) {
 
                     EntityChangeEvent event = new EntityChangeEvent(ChangeEventType.ADD_USER, u);
@@ -275,13 +281,13 @@ public class Service implements Observable<EntityChangeEvent>{
         for (Friendship f : repositoryFriendships.findAll()) {
             if(f.getId_user_1().equals(user.getId())){
                 friends.add(repositoryUsers.findOne(f.getId_user_2()).get());
-                User utilizator = repositoryUsers.findOne(f.getId_user_1()).get();
-                repositoryUsers.findOne(f.getId_user_2()).get().addFriend(utilizator);
+                User friend = repositoryUsers.findOne(f.getId_user_1()).get();
+                repositoryUsers.findOne(f.getId_user_2()).get().addFriend(friend);
             }
             else if(f.getId_user_2().equals(user.getId())){
                 friends.add(repositoryUsers.findOne(f.getId_user_1()).get());
-                User utilizator = repositoryUsers.findOne(f.getId_user_2()).get();
-                repositoryUsers.findOne(f.getId_user_1()).get().addFriend(utilizator);
+                User friend = repositoryUsers.findOne(f.getId_user_2()).get();
+                repositoryUsers.findOne(f.getId_user_1()).get().addFriend(friend);
             }
         }
 
@@ -371,6 +377,29 @@ public class Service implements Observable<EntityChangeEvent>{
 
     }
 
+    public String hashPassword(String password){
+
+        try{
+
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes());
+            return Base64.getEncoder().encodeToString(hash);
+
+        } catch (NoSuchAlgorithmException ex){
+            throw new RuntimeException("Hashing error", ex);
+        }
+    }
+
+    public User login(String email, String password){
+
+        String hashedPassword = hashPassword(password);
+        for (User user : findAllUsers()) {
+            if (user.getEmail().equals(email) && hashedPassword.equals(user.getPassword())){
+                return user;
+            }
+        }
+        return null;
+    }
 
 
     @Override
