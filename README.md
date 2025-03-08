@@ -1,4 +1,4 @@
-# Social Network Project
+# 🌍💻 Social Network Project
 This is a Java-based social networking application designed to connect users through an intuitive and modern graphical interface. Built with JavaFX and powered by PostgreSQL, this project demonstrates a full-stack approach to creating a dynamic, user-friendly platform where individuals can interact, build connections, and communicate in real time.
 
 ## 📌 Key Features
