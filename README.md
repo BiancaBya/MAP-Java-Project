@@ -1,7 +1,7 @@
 # Social Network Project
 This is a Java-based social networking application designed to connect users through an intuitive and modern graphical interface. Built with JavaFX and powered by PostgreSQL, this project demonstrates a full-stack approach to creating a dynamic, user-friendly platform where individuals can interact, build connections, and communicate in real time.
 
-## Key Features
+## 📌 Key Features
 - User Authentication:
 Secure account creation (sign-up) and login processes ensure that every user’s profile is protected and personalized.
 
@@ -14,7 +14,7 @@ An integrated messaging feature allows users to communicate directly with their 
 - Modern Graphical Interface:
 Developed using JavaFX, the interface is both responsive and visually appealing, providing a smooth user experience.
 
-## Technologies Used
+## ⚙️ Technologies Used
 
 - Java:
 Core programming language used to build the application logic and overall structure.
@@ -28,7 +28,7 @@ A powerful open-source relational database system that securely manages all user
 - Build Tools:
 Gradle is used to manage dependencies and build the project efficiently.
 
-## Architecture 
+## 🌐 Architecture 
 
 - **Domain (Model):**
   - Encapsulates the core business logic and entities (e.g., User, Message, FriendRequest).
@@ -51,7 +51,7 @@ Gradle is used to manage dependencies and build the project efficiently.
     - Built using JavaFX, it offers a responsive and user-friendly interface.
     - Delivers a smooth and engaging user experience by cleanly separating visual elements from business logic.
 
-## Photos      
+## 📷 Photos      
 
 ![signup](https://github.com/user-attachments/assets/acb63467-18f9-40e7-962f-e56be5a7d314)
 
